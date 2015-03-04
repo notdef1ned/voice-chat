@@ -64,7 +64,7 @@ namespace Client
                     return;
 
                 var page = FindTabPage(args.Sender) ?? AddTabPage(args.Sender);
-                page.DialogBox.AppendText(args.Sender + ": " + message + "\r\n");
+                page.DialogBox.AppendText(message + "\r\n");
             }
             
         }
@@ -81,7 +81,7 @@ namespace Client
             return page;
         }
 
-        void chatClient_UserListReceived(object sender, EventArgs e)
+        private void chatClient_UserListReceived(object sender, EventArgs e)
         {
             var list = (string) sender;
             if (lbUsers.InvokeRequired)
@@ -94,11 +94,14 @@ namespace Client
                 lbUsers.Items.Clear();
                 if (list == string.Empty)
                     return;
-                var users = list.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                var users = list.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var user in users)
                     lbUsers.Items.Add(user);
             }
-            
+            if (tcChat.InvokeRequired)
+            {
+
+            }
         }
 
         private void call_Click(object sender, EventArgs e)
@@ -134,12 +137,18 @@ namespace Client
 
         private void sendMessage_Click(object sender, EventArgs e)
         {
+            SendMessage();
+        }
+
+        private void SendMessage()
+        {
             var selectedUser = lbUsers.SelectedItem.ToString();
             var message = ChatClient.UserName + ": " + messageTextbox.Text + "\n";
-            ChatClient.SendMessage(message,selectedUser);
+            ChatClient.SendMessage(message, selectedUser);
             var page = FindTabPage(selectedUser) ?? AddTabPage(selectedUser);
             tcChat.SelectedTab = page;
             page.DialogBox.AppendText(message);
+            messageTextbox.Clear();
         }
 
         private void lbUsers_SelectedValueChanged(object sender, EventArgs e)
@@ -147,14 +156,32 @@ namespace Client
             SetButtons();
         }
 
-        private void SetButtons()
-        {
-            sendMessageButton.Enabled = callButton.Enabled = (lbUsers.SelectedItem != null);
-        }
-
         private void ClientForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             ChatClient.CloseConnection();
+        }
+
+        private void messageTextbox_TextChanged(object sender, EventArgs e)
+        {
+            SetButtons();
+        }
+
+        private void ClientForm_Load(object sender, EventArgs e)
+        {
+            SetButtons();
+        }
+
+        private void SetButtons()
+        {
+            var isSelected = lbUsers.SelectedItem != null;
+            sendMessageButton.Enabled = messageTextbox.Text != String.Empty && isSelected;
+            callButton.Enabled = isSelected;
+        }
+
+        private void messageTextbox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && sendMessageButton.Enabled)
+                SendMessage();
         }
 
 

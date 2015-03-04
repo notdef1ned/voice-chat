@@ -60,6 +60,8 @@
             this.messageTextbox.Name = "messageTextbox";
             this.messageTextbox.Size = new System.Drawing.Size(651, 69);
             this.messageTextbox.TabIndex = 3;
+            this.messageTextbox.TextChanged += new System.EventHandler(this.messageTextbox_TextChanged);
+            this.messageTextbox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.messageTextbox_KeyDown);
             // 
             // callButton
             // 
@@ -133,6 +135,7 @@
             this.ShowIcon = false;
             this.Text = "Voice Chat Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientForm_FormClosing);
+            this.Load += new System.EventHandler(this.ClientForm_Load);
             this.tcChat.ResumeLayout(false);
             this.tpGlobal.ResumeLayout(false);
             this.tpGlobal.PerformLayout();
