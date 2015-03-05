@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Text;
 
 namespace ChatLibrary
@@ -12,6 +11,7 @@ namespace ChatLibrary
         public const string Message = "message";
         public const string Request = "request";
         public const string Response = "response";
+        public const string Heartbeat = "heartbeat";
         #endregion
 
         #region Interaction Subject
@@ -30,6 +30,9 @@ namespace ChatLibrary
         public const string Conversation = "Conversation";
         public const string IncomingCall = "Incoming Call";
         public const string OutcomingCall = "Calling";
+        public const string Global = "Global";
+        public const string Connected = "connected";
+        public const string Disconnected = "disconnected";
         #endregion
 
         #endregion

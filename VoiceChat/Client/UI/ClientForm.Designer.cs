@@ -1,4 +1,4 @@
-﻿namespace Client
+﻿namespace Client.UI
 {
     partial class ClientForm
     {
@@ -33,10 +33,7 @@
             this.callButton = new System.Windows.Forms.Button();
             this.tbDialog = new System.Windows.Forms.TextBox();
             this.lbUsers = new System.Windows.Forms.ListBox();
-            this.tcChat = new System.Windows.Forms.TabControl();
-            this.tpGlobal = new ChatTabPage();
-            this.tcChat.SuspendLayout();
-            this.tpGlobal.SuspendLayout();
+            this.tcChat = new UI.ChatTabControl();
             this.SuspendLayout();
             // 
             // sendMessageButton
@@ -103,23 +100,11 @@
             this.tcChat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tcChat.Controls.Add(this.tpGlobal);
             this.tcChat.Location = new System.Drawing.Point(228, 7);
             this.tcChat.Name = "tcChat";
             this.tcChat.SelectedIndex = 0;
             this.tcChat.Size = new System.Drawing.Size(699, 525);
             this.tcChat.TabIndex = 8;
-            // 
-            // tpGlobal
-            // 
-            this.tpGlobal.Controls.Add(this.tbDialog);
-            this.tpGlobal.Location = new System.Drawing.Point(4, 34);
-            this.tpGlobal.Name = "tpGlobal";
-            this.tpGlobal.Padding = new System.Windows.Forms.Padding(3);
-            this.tpGlobal.Size = new System.Drawing.Size(691, 487);
-            this.tpGlobal.TabIndex = 0;
-            this.tpGlobal.Text = "Global";
-            this.tpGlobal.UseVisualStyleBackColor = true;
             // 
             // ClientForm
             // 
@@ -136,9 +121,6 @@
             this.Text = "Voice Chat Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientForm_FormClosing);
             this.Load += new System.EventHandler(this.ClientForm_Load);
-            this.tcChat.ResumeLayout(false);
-            this.tpGlobal.ResumeLayout(false);
-            this.tpGlobal.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -151,8 +133,7 @@
         private System.Windows.Forms.Button callButton;
         private System.Windows.Forms.TextBox tbDialog;
         private System.Windows.Forms.ListBox lbUsers;
-        private System.Windows.Forms.TabControl tcChat;
-        private ChatTabPage tpGlobal;
+        private ChatTabControl tcChat;
     }
 }
 

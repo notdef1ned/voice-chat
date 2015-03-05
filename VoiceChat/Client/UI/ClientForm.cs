@@ -3,9 +3,8 @@ using System.Linq;
 using System.Windows.Forms;
 using ChatLibrary;
 using Client.Client;
-using Client.UI;
 
-namespace Client
+namespace Client.UI
 {
     public partial class ClientForm : Form
     {
@@ -51,7 +50,7 @@ namespace Client
 
         private void chatClient_MessageReceived(object sender, EventArgs e)
         {
-            if (tbDialog.InvokeRequired)
+            if (tcChat.InvokeRequired)
             {
                 RecieveMessage r = chatClient_MessageReceived;
                 Invoke(r, sender, e);
@@ -63,8 +62,9 @@ namespace Client
                 if (args == null)
                     return;
 
-                var page = FindTabPage(args.Sender) ?? AddTabPage(args.Sender);
-                page.DialogBox.AppendText(message + "\r\n");
+                var page = FindTabPage(args.Message) ?? AddTabPage(args.Message);
+                var time = DateTime.Now.ToString("HH:mm:ss");
+                page.DialogBox.AppendText(string.Format("[{0}] {1}", time, message));
             }
             
         }
@@ -84,6 +84,11 @@ namespace Client
         private void chatClient_UserListReceived(object sender, EventArgs e)
         {
             var list = (string) sender;
+            var args = e as MessageEventArgs;
+            if (args == null)
+                return;
+            var userInfo = args.Message.Split('|');
+            
             if (lbUsers.InvokeRequired)
             {
                 SetUserList ul = chatClient_UserListReceived;
@@ -92,16 +97,14 @@ namespace Client
             else
             {
                 lbUsers.Items.Clear();
+                tcChat.GlobalPage.DialogBox.AppendText(string.Format("{0} {1}\n", userInfo[0], userInfo[1]));
                 if (list == string.Empty)
                     return;
                 var users = list.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var user in users)
                     lbUsers.Items.Add(user);
-            }
-            if (tcChat.InvokeRequired)
-            {
-
-            }
+             }
+            
         }
 
         private void call_Click(object sender, EventArgs e)
@@ -119,10 +122,10 @@ namespace Client
             if (args == null)
                 return;
 
-            callForm = new CallForm(args.Sender, FormType.Incoming);
+            callForm = new CallForm(args.Message, FormType.Incoming);
             var dialogResult = callForm.ShowDialog() == DialogResult.OK 
                 ? Chat.Accept : Chat.Decline;
-            ChatClient.AnswerIncomingCall(args.Sender, address, dialogResult);
+            ChatClient.AnswerIncomingCall(args.Message, address, dialogResult);
             switch (dialogResult)
             {
                 case Chat.Accept:
@@ -147,7 +150,8 @@ namespace Client
             ChatClient.SendMessage(message, selectedUser);
             var page = FindTabPage(selectedUser) ?? AddTabPage(selectedUser);
             tcChat.SelectedTab = page;
-            page.DialogBox.AppendText(message);
+            var time = DateTime.Now.ToString("HH:mm:ss");
+            page.DialogBox.AppendText(string.Format("{0} {1}",time,message));
             messageTextbox.Clear();
         }
 
@@ -158,6 +162,7 @@ namespace Client
 
         private void ClientForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            ChatClient.IsConnected = false;
             ChatClient.CloseConnection();
         }
 
@@ -183,7 +188,6 @@ namespace Client
             if (e.KeyCode == Keys.Enter && sendMessageButton.Enabled)
                 SendMessage();
         }
-
 
 
     }

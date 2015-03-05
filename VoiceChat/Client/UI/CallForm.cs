@@ -42,7 +42,6 @@ namespace Client.UI
                 {
                     case FormType.Conversation:
                         Control = new Conversation();
-
                         Text = string.Format("{0}: {1}", Chat.Conversation, caller);
                         break;
                     case FormType.Incoming:

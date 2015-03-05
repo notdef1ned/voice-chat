@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.connectionInfo = new System.Windows.Forms.GroupBox();
+            this.lblName = new System.Windows.Forms.Label();
+            this.tbServerName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.cbInterfaces = new System.Windows.Forms.ComboBox();
@@ -44,6 +46,8 @@
             // 
             // connectionInfo
             // 
+            this.connectionInfo.Controls.Add(this.lblName);
+            this.connectionInfo.Controls.Add(this.tbServerName);
             this.connectionInfo.Controls.Add(this.label2);
             this.connectionInfo.Controls.Add(this.label1);
             this.connectionInfo.Controls.Add(this.cbInterfaces);
@@ -57,10 +61,26 @@
             this.connectionInfo.TabStop = false;
             this.connectionInfo.Text = "Connection Information";
             // 
+            // lblName
+            // 
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(12, 99);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(140, 25);
+            this.lblName.TabIndex = 6;
+            this.lblName.Text = "Server name:";
+            // 
+            // tbServerName
+            // 
+            this.tbServerName.Location = new System.Drawing.Point(16, 134);
+            this.tbServerName.Name = "tbServerName";
+            this.tbServerName.Size = new System.Drawing.Size(265, 31);
+            this.tbServerName.TabIndex = 5;
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 182);
+            this.label2.Location = new System.Drawing.Point(15, 275);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(185, 25);
             this.label2.TabIndex = 4;
@@ -69,7 +89,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 96);
+            this.label1.Location = new System.Drawing.Point(15, 189);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(138, 25);
             this.label1.TabIndex = 3;
@@ -78,14 +98,14 @@
             // cbInterfaces
             // 
             this.cbInterfaces.FormattingEnabled = true;
-            this.cbInterfaces.Location = new System.Drawing.Point(18, 210);
+            this.cbInterfaces.Location = new System.Drawing.Point(16, 303);
             this.cbInterfaces.Name = "cbInterfaces";
-            this.cbInterfaces.Size = new System.Drawing.Size(208, 33);
+            this.cbInterfaces.Size = new System.Drawing.Size(265, 33);
             this.cbInterfaces.TabIndex = 2;
             // 
             // tbPort
             // 
-            this.tbPort.Location = new System.Drawing.Point(18, 124);
+            this.tbPort.Location = new System.Drawing.Point(17, 217);
             this.tbPort.Name = "tbPort";
             this.tbPort.Size = new System.Drawing.Size(121, 31);
             this.tbPort.TabIndex = 1;
@@ -93,7 +113,7 @@
             // cbStartStop
             // 
             this.cbStartStop.AutoSize = true;
-            this.cbStartStop.Location = new System.Drawing.Point(18, 48);
+            this.cbStartStop.Location = new System.Drawing.Point(19, 49);
             this.cbStartStop.Name = "cbStartStop";
             this.cbStartStop.Size = new System.Drawing.Size(208, 29);
             this.cbStartStop.TabIndex = 0;
@@ -166,6 +186,8 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.GroupBox gbConnectedClients;
         private System.Windows.Forms.ListBox connectedClients;
+        private System.Windows.Forms.Label lblName;
+        private System.Windows.Forms.TextBox tbServerName;
     }
 }
 

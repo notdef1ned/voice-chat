@@ -8,11 +8,12 @@ namespace Client.Client
 {
     public class MessageEventArgs : EventArgs
     {
-        public string Sender { get; set; }
+        public string Message { get; set; }
 
         public MessageEventArgs(string sender)
         {
-            Sender = sender;
+            Message = sender;
         }
+
     }
 }

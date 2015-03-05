@@ -14,12 +14,12 @@ namespace Server.Server
     {
         #region Fields
         private TcpListener tcpServer;
-        private TcpClient tcpClient;
         private Thread mainThread;
         private readonly int portNumber;
+        private bool isRunning;
         private NetworkInterface networkInterface;
-        private readonly Dictionary<TcpClient,Thread> clients = new Dictionary<TcpClient, Thread>();
-        private readonly Dictionary<string, TcpClient> userNames = new Dictionary<string, TcpClient>();  
+        private string serverName;
+        private readonly Dictionary<string, Socket> userNames = new Dictionary<string, Socket>(); 
         public event EventHandler ClientConnected;
         public event EventHandler ClientDisconnected;
         #endregion
@@ -28,8 +28,9 @@ namespace Server.Server
 
         #region Constructor
 
-        public ChatServer(int portNumber, object networkInterface)
+        public ChatServer(int portNumber, object networkInterface, string serverName)
         {
+            this.serverName = serverName;
             this.portNumber = portNumber;
             this.networkInterface = networkInterface as NetworkInterface;
         }
@@ -50,14 +51,21 @@ namespace Server.Server
         {
             tcpServer = new TcpListener(IPAddress.Any,portNumber);
             tcpServer.Start();
-
+            
+            isRunning = true;
             // Keep accepting client connection
-            while (true)
+            while (isRunning)
             {
+                if (!tcpServer.Pending())
+                {
+                    Thread.Sleep(500);
+                    continue;
+                }
                 // New client is connected, call event to handle it
                 var clientThread = new Thread(NewClient);
-                tcpClient = tcpServer.AcceptTcpClient();
-                clientThread.Start(tcpClient);
+                var tcpClient = tcpServer.AcceptTcpClient();
+                tcpClient.ReceiveTimeout = 20000;
+                clientThread.Start(tcpClient.Client);
             }
         }
         /// <summary>
@@ -65,19 +73,13 @@ namespace Server.Server
         /// </summary>
         public void StopServer()
         {
+            isRunning = false;
+
             if (tcpServer == null)
                 return;
 
-            foreach (var record in clients)
-            {
-                record.Key.Client.Close();
-                record.Value.Abort();
-            }
-
-            clients.Clear();
             userNames.Clear();
             
-            mainThread.Abort();
             tcpServer.Stop();
         }
 
@@ -87,42 +89,42 @@ namespace Server.Server
         #region Add/Remove Clients
         public void NewClient(object obj)
         {
-            ClientAdded(this, new CustomEventArgs((TcpClient)obj));
+            ClientAdded(this, new CustomEventArgs((Socket)obj));
         }
 
 
         public void ClientAdded(object sender, EventArgs e)
         {
-            tcpClient = ((CustomEventArgs) e).ClientSock;
+            var socket = ((CustomEventArgs) e).ClientSocket;
            
             // update clients list
             var bytes = new byte[1024];
-            var bytesRead = tcpClient.Client.Receive(bytes);
+            var bytesRead = socket.Receive(bytes);
             var str = Encoding.ASCII.GetString(bytes, 0, bytesRead);
 
-            OnClientConnected(tcpClient, str);
-            clients.Add(tcpClient, Thread.CurrentThread);
-            userNames.Add(str, tcpClient);
+            OnClientConnected(socket, str);
+            
+            userNames.Add(str, socket);
 
             foreach (var user in userNames)
-                SendUsersList(user.Value,user.Key);
+                SendUsersList(user.Value, user.Key, str, Chat.Connected);
            
             var state = new Chat.StateObject
             {
-                WorkSocket = tcpClient.Client
+                WorkSocket = socket
             };
             
-            tcpClient.Client.BeginReceive(state.Buffer, 0, Chat.StateObject.BufferSize, 0,
-                OnReceive, state);
-
+            socket.BeginReceive(state.Buffer, 0, Chat.StateObject.BufferSize, 0,
+            OnReceive, state);
+            
         }
 
-        public void SendUsersList(TcpClient client, string userName)
+        public void SendUsersList(Socket clientSocket, string userName, string changedUser, string state)
         {
-            var userList = string.Format("{0}|{1}|{2}", Chat.Message, Chat.Server,
-                string.Join(",", userNames.Keys.Where(u => u != userName).ToArray()));
+            var userList = string.Format("{0}|{1}|{2}|{3}|{4}", Chat.Message, Chat.Server,
+                string.Join(",", userNames.Keys.Where(u => u != userName).ToArray()),changedUser,state);
             var bytes = Encoding.ASCII.GetBytes(userList);
-            client.Client.Send(bytes);
+            clientSocket.Send(bytes);
         }
 
 
@@ -143,58 +145,74 @@ namespace Server.Server
                 if (bytesRead <= 0)
                     return;
 
-                var recievedString = Encoding.ASCII.GetString(state.Buffer, 0, bytesRead);
-                var str = recievedString.Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
-
-                var sender = userNames[str[2]];
-                
-                TcpClient client;
-                if (userNames.TryGetValue(str[1], out client))
-                {
-                    recievedString += "|" + GetRemoteAddress(sender);
-                    var bytes = Encoding.ASCII.GetBytes(recievedString);
-                    client.Client.Send(bytes);
-                }
-                
+                ParseRequest(state,bytesRead,handler);
                 
                 // Restore receiving
                 handler.BeginReceive(state.Buffer, 0, Chat.StateObject.BufferSize, 0,
                 OnReceive, state);
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                DisconnectClient(tcpClient);
+                DisconnectClient(handler);
                 
             }
         }
 
-
-        private string GetRemoteAddress(TcpClient client)
+        private void ParseRequest(Chat.StateObject state,int bytesRead, Socket incomingClient)
         {
-            var endPoint = (IPEndPoint) client.Client.RemoteEndPoint;
+            var recievedString = Encoding.ASCII.GetString(state.Buffer, 0, bytesRead);
+            var str = recievedString.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+            
+            var messageType = str[0];
+            
+
+            switch (messageType)
+            {
+                case Chat.Message:
+                    Socket clientSocket;
+                    var sender = userNames[str[2]];
+                    if (userNames.TryGetValue(str[1], out clientSocket))
+                    {
+                        recievedString += "|" + GetRemoteAddress(sender);
+                        var bytes = Encoding.ASCII.GetBytes(recievedString);
+                        clientSocket.Send(bytes);
+                    }
+                break;
+                case Chat.Heartbeat:
+
+                    if (!incomingClient.Connected)
+                        DisconnectClient(incomingClient);
+                    
+                break;
+            }
+            
+            
+
+            
+        }
+
+
+        private static string GetRemoteAddress(Socket clientSocket)
+        {
+            var endPoint = (IPEndPoint) clientSocket.RemoteEndPoint;
             return endPoint.Address + ":" + endPoint.Port;
         }
 
 
 
 
-        public void DisconnectClient(TcpClient client)
+        public void DisconnectClient(Socket clientSocket)
         {
-            Thread thread;
-            if (!clients.TryGetValue(client, out thread)) 
-                return;
-            var userName = userNames.FirstOrDefault(k => k.Value == client).Key;
-            OnClientDisconnected(client, userName);
+            var userName = userNames.FirstOrDefault(k => k.Value == clientSocket).Key;
+            OnClientDisconnected(clientSocket, userName);
 
-            client.Client.Close();
-            thread.Abort();
-            clients.Remove(client);
+            clientSocket.Close();
             userNames.Remove(userName);
 
             foreach (var user in userNames)
-                SendUsersList(user.Value,user.Key);
-           }
+                SendUsersList(user.Value, user.Key, userName, Chat.Disconnected);
+        }
 
        
 
@@ -203,16 +221,16 @@ namespace Server.Server
 
 
 
-        protected virtual void OnClientConnected(TcpClient client, string name)
+        protected virtual void OnClientConnected(Socket clientSocket, string name)
         {
             var handler = ClientConnected;
-            if (handler != null) handler(name, new CustomEventArgs(client));
+            if (handler != null) handler(name, new CustomEventArgs(clientSocket));
         }
 
-        protected virtual void OnClientDisconnected(TcpClient client, string name)
+        protected virtual void OnClientDisconnected(Socket clientSocket, string name)
         {
             var handler = ClientDisconnected;
-            if (handler != null) handler(name, new CustomEventArgs(client));
+            if (handler != null) handler(name, new CustomEventArgs(clientSocket));
         }
     }
 }

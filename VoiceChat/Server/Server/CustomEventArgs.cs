@@ -9,11 +9,11 @@ namespace Server
 {
     public class CustomEventArgs : EventArgs
     {
-        public TcpClient ClientSock { get; set; }
+        public Socket ClientSocket { get; set; }
 
-        public CustomEventArgs(TcpClient tcpClient)
+        public CustomEventArgs(Socket clientSocket)
         {
-            ClientSock = tcpClient;
+            ClientSocket = clientSocket;
         }
     }
 }

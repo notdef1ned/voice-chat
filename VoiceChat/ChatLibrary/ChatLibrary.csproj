@@ -7,7 +7,7 @@
     <ProjectGuid>{2A34E74A-0984-4C3D-870F-F50F68F5D575}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ChatLibrary</RootNamespace>
+    <RootNamespace>Chat</RootNamespace>
     <AssemblyName>ChatLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

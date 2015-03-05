@@ -10,8 +10,6 @@ namespace Server
     public partial class ServerForm : Form
     {
         private ChatServer server;
-        public delegate void ChangedEventHandler(object sender, EventArgs e);
-        public event ChangedEventHandler Changed;
         public delegate void SetListBoxItem(String str, String type); 
         public ServerForm()
         {
@@ -32,26 +30,25 @@ namespace Server
                 try
                 {
                     var port = Int32.Parse(tbPort.Text);
-                    server = new ChatServer(port, cbInterfaces.SelectedItem);
+                    server = new ChatServer(port, cbInterfaces.SelectedItem,tbServerName.Text);
                     server.ClientConnected += ServerOnClientConnected;
                     server.ClientDisconnected += ServerOnClientDisconnected;
-                    Changed += server.ClientAdded;
                     server.StartServer();
                     WriteToEventLog(Log.Message(Log.Server, " on port " + port,Log.Start),EventLogEntryType.Information);
-
-
                 }
-                catch (Exception ex)
+                catch
                 {
-                    MessageBox.Show(@"Please enter port number");
+                    MessageBox.Show(@"Please enter valid port number");
                     cbStartStop.Checked = false;
                 }
             }
 
             else
             {
-                if (server != null)
-                    server.StopServer();
+                if (server == null) 
+                    return;
+                server.StopServer();
+                WriteToEventLog(Log.Message(Log.Server," ",Log.Stop),EventLogEntryType.Information);
             }
         }
 
@@ -75,7 +72,7 @@ namespace Server
             if (args == null)
                 return string.Empty;
 
-            var client = args.ClientSock.Client;
+            var client = args.ClientSocket;
             var remoteEndPoint = (IPEndPoint)client.RemoteEndPoint;
             var remoteIp = remoteEndPoint.Address.ToString();
             var remotePort = remoteEndPoint.Port.ToString();

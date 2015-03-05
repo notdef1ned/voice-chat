@@ -72,6 +72,9 @@
     <Compile Include="UI\CallForm.Designer.cs">
       <DependentUpon>CallForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ChatTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\Controls\Conversation.cs">
       <SubType>UserControl</SubType>
     </Compile>

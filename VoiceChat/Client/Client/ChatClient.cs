@@ -7,18 +7,21 @@ using System.Threading;
 using System.Windows.Forms;
 using ChatLibrary;
 using NAudio.Wave;
+using Timer = System.Timers.Timer;
 
 namespace Client.Client
 {
     public class ChatClient
     {
         #region Fields
+
         private readonly TcpClient server;
         private readonly Socket clientSocket;
         private WaveInEvent sourceStream;
         private WaveOut recievedStream;
         private IPEndPoint remoteEndPoint;
         private Thread udpReceiveThread;
+        private Thread heartBeatThread;
         #endregion
 
         #region Events
@@ -34,6 +37,8 @@ namespace Client.Client
         public string ServerAddress { get; set; }
         public string UserName { get; set; }
 
+        public bool IsConnected { get; set; }
+
         #endregion
 
 
@@ -48,7 +53,8 @@ namespace Client.Client
             try
             {
                 server = new TcpClient(serverAddress,port);
-                // Creating new client socket
+                IsConnected = true;
+                // Creating new udp client socket
                 clientSocket = new Socket(AddressFamily.InterNetwork,
                     SocketType.Dgram, ProtocolType.Udp);
                 clientSocket.Bind(server.Client.LocalEndPoint);
@@ -76,18 +82,44 @@ namespace Client.Client
             //Receive list of users online 
             ReceiveUsersList();
 
+            heartBeatThread = new Thread(HeartBeat);
+            heartBeatThread.Start();
+
             server.Client.BeginReceive(state.Buffer, 0, Chat.StateObject.BufferSize, 0,
                 OnReceive, state);
         }
 
+        /// <summary>
+        /// Heartbeat request to server
+        /// </summary>
+        private void HeartBeat()
+        {
+            var heartbeat = string.Format("{0}|{1}", Chat.Heartbeat, UserName);
+            var bytes = Encoding.ASCII.GetBytes(heartbeat);
+            Timer timer = null;
+            while (IsConnected)
+            {
+                if (timer == null)
+                {
+                    timer = new Timer(1000);
+                    timer.Elapsed += (sender, args) =>
+                    {
+                        server.Client.Send(bytes);
+                    };
+                }
+                timer.Enabled = true;
+            }
+            
+        }
 
         private void ReceiveUsersList()
         {
             var bytes = new byte[1024];
             var bytesRead = server.Client.Receive(bytes);
             var content = Encoding.ASCII.GetString(bytes, 0, bytesRead);
-            var list = content.Split('|')[2];
-            OnUserListReceived(list);
+            var splittedStr = content.Split('|');
+            var list = splittedStr[2];
+            OnUserListReceived(list,splittedStr[3],splittedStr[4]);
         }
 
         public void OnReceive(IAsyncResult ar)
@@ -164,7 +196,7 @@ namespace Client.Client
                     switch (splittedMessage[1])
                     {
                         case Chat.Server:
-                            OnUserListReceived(splittedMessage[2]);
+                            OnUserListReceived(splittedMessage[2],splittedMessage[3],splittedMessage[4]);
                         break;
                         default:
                             OnMessageReceived(splittedMessage[3], splittedMessage[2]);  
@@ -267,10 +299,10 @@ namespace Client.Client
         }
 
 
-        private void OnUserListReceived(string str)
+        private void OnUserListReceived(string str, string userStr, string state) 
         {
             var handler = UserListReceived;
-            if (handler != null) handler(str, EventArgs.Empty);
+            if (handler != null) handler(str, new MessageEventArgs(string.Format("{0}|{1}",userStr,state)));
         }
 
         protected virtual void OnMessageReceived(string str, string sender)
@@ -282,6 +314,7 @@ namespace Client.Client
 
         public void CloseConnection()
         {
+            IsConnected = false;
             server.Client.Close();
         }
 
