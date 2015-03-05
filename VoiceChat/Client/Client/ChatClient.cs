@@ -104,7 +104,15 @@ namespace Client.Client
                     timer = new Timer(1000);
                     timer.Elapsed += (sender, args) =>
                     {
-                        server.Client.Send(bytes);
+                        try
+                        {
+                            server.Client.Send(bytes);
+                        }
+                        catch
+                        {
+                            server.Client.Disconnect(true);
+                        }
+                        
                     };
                 }
                 timer.Enabled = true;
@@ -143,18 +151,11 @@ namespace Client.Client
 
                 ParseMessage(content);
                 
-
                 server.Client.BeginReceive(state.Buffer, 0, Chat.StateObject.BufferSize, 0, OnReceive, state);
             }
-            catch (SocketException socketException)
+            catch (SocketException)
             {
-                MessageBox.Show("GOVNO!!!!!!");
-                //WSAECONNRESET, the other side closed impolitely
-                if (socketException.ErrorCode == 10054 || ((socketException.ErrorCode != 10004) && (socketException.ErrorCode != 10053)))
-                {
-                    handler.Close();
-                }
-                throw;
+                server.Client.Disconnect(true);
             }
         }
 

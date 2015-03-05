@@ -169,7 +169,11 @@ namespace Server.Server
 
             switch (messageType)
             {
-                case Chat.Message:
+                case Chat.Heartbeat:
+                    if (!incomingClient.Connected)
+                        DisconnectClient(incomingClient);
+                break;
+                default:
                     Socket clientSocket;
                     var sender = userNames[str[2]];
                     if (userNames.TryGetValue(str[1], out clientSocket))
@@ -178,12 +182,6 @@ namespace Server.Server
                         var bytes = Encoding.ASCII.GetBytes(recievedString);
                         clientSocket.Send(bytes);
                     }
-                break;
-                case Chat.Heartbeat:
-
-                    if (!incomingClient.Connected)
-                        DisconnectClient(incomingClient);
-                    
                 break;
             }
             
