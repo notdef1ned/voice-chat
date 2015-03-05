@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -16,8 +17,10 @@ namespace Client.Client
 
         private readonly TcpClient server;
         private readonly Socket clientSocket;
+        
         private WaveInEvent sourceStream;
         private WaveOut recievedStream;
+        private readonly IPEndPoint localEndPoint;
         private IPEndPoint remoteEndPoint;
         private Thread udpReceiveThread;
         private Thread heartBeatThread;
@@ -56,7 +59,8 @@ namespace Client.Client
                 // Creating new udp client socket
                 clientSocket = new Socket(AddressFamily.InterNetwork,
                     SocketType.Dgram, ProtocolType.Udp);
-                clientSocket.Bind(server.Client.LocalEndPoint);
+                localEndPoint = GetHostEndPoint();
+                clientSocket.Bind(localEndPoint);
                 ServerAddress = serverAddress;
                 UserName = userName;
             }
@@ -71,6 +75,19 @@ namespace Client.Client
         }
 
 
+        private IPEndPoint GetHostEndPoint()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            var ipAddress = host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+            if (ipAddress == null) 
+                return null;
+            var random = new Random();
+            var endPoint = new IPEndPoint(ipAddress,random.Next(65520,65530) );
+            ClientAddress = string.Format("{0}:{1}",endPoint.Address,endPoint.Port);
+            return endPoint;
+        }
+
+
         public void Init()
         {
             var state = new Chat.Chat.StateObject
@@ -81,8 +98,8 @@ namespace Client.Client
             //Receive list of users online 
             ReceiveUsersList();
 
-            heartBeatThread = new Thread(HeartBeat);
-            heartBeatThread.Start();
+            //heartBeatThread = new Thread(HeartBeat);
+            //heartBeatThread.Start();
 
             server.Client.BeginReceive(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, 0,
                 OnReceive, state);
@@ -177,8 +194,8 @@ namespace Client.Client
             recievedStream.Init(provider);
             recievedStream.Play();
             
-            var endPoint = (EndPoint) remoteEndPoint;
-            handler.BeginReceiveFrom(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, SocketFlags.None, ref endPoint, OnUdpRecieve, state);
+            var ep = (EndPoint) localEndPoint;
+            handler.BeginReceiveFrom(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, SocketFlags.None, ref ep, OnUdpRecieve, state);
             
         }
 
@@ -231,7 +248,7 @@ namespace Client.Client
             var ip = splittedAddress[0];
             var port = splittedAddress[1];
             
-            remoteEndPoint = new IPEndPoint(IPAddress.Parse(ip), Int32.Parse(port));
+            remoteEndPoint = new IPEndPoint(IPAddress.Parse(ip),Int32.Parse(port));
 
             recievedStream = new WaveOut(WaveCallbackInfo.FunctionCallback());
 
@@ -261,8 +278,8 @@ namespace Client.Client
             {
                 WorkSocket = clientSocket
             };
-            var endPoint = (EndPoint) remoteEndPoint;
-            clientSocket.BeginSendTo(buf, 0, bytesRecorded, SocketFlags.None, endPoint, OnUdpSend, state);
+            var ep = remoteEndPoint as EndPoint;
+            clientSocket.BeginSendTo(buf, 0, bytesRecorded, SocketFlags.None, ep, OnUdpSend, state);
         }
 
         private void ReceiveUdpData()
@@ -271,9 +288,9 @@ namespace Client.Client
             {
                 WorkSocket = clientSocket
             };
-            
-            var endPoint = (EndPoint) remoteEndPoint;
-            clientSocket.BeginReceiveFrom(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, SocketFlags.None, ref endPoint, OnUdpRecieve, state);
+            var ep = remoteEndPoint as EndPoint;
+            clientSocket.BeginReceiveFrom(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, SocketFlags.None, ref ep,
+                OnUdpRecieve, state);
         }
 
         /// <summary>
@@ -293,7 +310,7 @@ namespace Client.Client
         /// <param name="recipient"></param>
         public void SendChatRequest(string recipient)
         {
-            var str = string.Format("{0}|{1}|{2}",Chat.Chat.Request, recipient, UserName);
+            var str = string.Format("{0}|{1}|{2}|{3}",Chat.Chat.Request, recipient, UserName,ClientAddress);
             var bytes = Encoding.Unicode.GetBytes(str);
             server.Client.Send(bytes);
         }
@@ -326,7 +343,7 @@ namespace Client.Client
 
         public void AnswerIncomingCall(string caller, string address, string answer)
         {
-            var str = string.Format("{0}|{1}|{2}|{3}", Chat.Chat.Response, caller, UserName, answer);
+            var str = string.Format("{0}|{1}|{2}|{3}|{4}", Chat.Chat.Response, caller, UserName, answer, ClientAddress);
             var bytes = Encoding.Unicode.GetBytes(str);
             if (answer == Chat.Chat.Accept)
                 StartVoiceChat(address);

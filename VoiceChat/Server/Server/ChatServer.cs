@@ -171,10 +171,8 @@ namespace Server.Server
                 break;
                 default:
                     Socket clientSocket;
-                    var sender = userNames[str[2]];
                     if (userNames.TryGetValue(str[1], out clientSocket))
                     {
-                        recievedString += "|" + GetRemoteAddress(sender);
                         var bytes = Encoding.Unicode.GetBytes(recievedString);
                         clientSocket.Send(bytes);
                     }
