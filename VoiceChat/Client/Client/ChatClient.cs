@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using ChatLibrary;
 using NAudio.Wave;
 using Timer = System.Timers.Timer;
 
@@ -61,20 +60,20 @@ namespace Client.Client
                 ServerAddress = serverAddress;
                 UserName = userName;
             }
-            catch (SocketException e)
+            catch (SocketException)
             {
                 MessageBox.Show(@"Unable to connect to server");
                 return;
             }
            // Send username to server
-            var bytes = Encoding.ASCII.GetBytes(userName);
+            var bytes = Encoding.Unicode.GetBytes(userName);
             server.Client.Send(bytes);
         }
 
 
         public void Init()
         {
-            var state = new Chat.StateObject
+            var state = new Chat.Chat.StateObject
             {
                 WorkSocket = server.Client
             };
@@ -85,7 +84,7 @@ namespace Client.Client
             heartBeatThread = new Thread(HeartBeat);
             heartBeatThread.Start();
 
-            server.Client.BeginReceive(state.Buffer, 0, Chat.StateObject.BufferSize, 0,
+            server.Client.BeginReceive(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, 0,
                 OnReceive, state);
         }
 
@@ -94,8 +93,8 @@ namespace Client.Client
         /// </summary>
         private void HeartBeat()
         {
-            var heartbeat = string.Format("{0}|{1}", Chat.Heartbeat, UserName);
-            var bytes = Encoding.ASCII.GetBytes(heartbeat);
+            var heartbeat = string.Format("{0}|{1}", Chat.Chat.Heartbeat, UserName);
+            var bytes = Encoding.Unicode.GetBytes(heartbeat);
             Timer timer = null;
             while (IsConnected)
             {
@@ -124,7 +123,7 @@ namespace Client.Client
         {
             var bytes = new byte[1024];
             var bytesRead = server.Client.Receive(bytes);
-            var content = Encoding.ASCII.GetString(bytes, 0, bytesRead);
+            var content = Encoding.Unicode.GetString(bytes, 0, bytesRead);
             var splittedStr = content.Split('|');
             var list = splittedStr[2];
             OnUserListReceived(list,splittedStr[3],splittedStr[4]);
@@ -132,7 +131,7 @@ namespace Client.Client
 
         public void OnReceive(IAsyncResult ar)
         {
-            var state = ar.AsyncState as Chat.StateObject;
+            var state = ar.AsyncState as Chat.Chat.StateObject;
             if (state == null)
                 return;
             var handler = state.WorkSocket;
@@ -145,13 +144,13 @@ namespace Client.Client
                     return;
 
                 state.Sb.Remove(0, state.Sb.Length);
-                state.Sb.Append(Encoding.ASCII.GetString(state.Buffer, 0, bytesRead));
+                state.Sb.Append(Encoding.Unicode.GetString(state.Buffer, 0, bytesRead));
 
                 var content = state.Sb.ToString();  
 
                 ParseMessage(content);
                 
-                server.Client.BeginReceive(state.Buffer, 0, Chat.StateObject.BufferSize, 0, OnReceive, state);
+                server.Client.BeginReceive(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, 0, OnReceive, state);
             }
             catch (SocketException)
             {
@@ -166,7 +165,7 @@ namespace Client.Client
 
         public void OnUdpRecieve(IAsyncResult ar)
         {
-            var state = ar.AsyncState as Chat.StateObject;
+            var state = ar.AsyncState as Chat.Chat.StateObject;
             if (state == null) 
                 return;
             var handler = clientSocket;
@@ -179,7 +178,7 @@ namespace Client.Client
             recievedStream.Play();
             
             var endPoint = (EndPoint) remoteEndPoint;
-            handler.BeginReceiveFrom(state.Buffer, 0, Chat.StateObject.BufferSize, SocketFlags.None, ref endPoint, OnUdpRecieve, state);
+            handler.BeginReceiveFrom(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, SocketFlags.None, ref endPoint, OnUdpRecieve, state);
             
         }
 
@@ -193,10 +192,10 @@ namespace Client.Client
             var interaction = splittedMessage[0];
             switch (interaction)
             {
-                case Chat.Message:
+                case Chat.Chat.Message:
                     switch (splittedMessage[1])
                     {
-                        case Chat.Server:
+                        case Chat.Chat.Server:
                             OnUserListReceived(splittedMessage[2],splittedMessage[3],splittedMessage[4]);
                         break;
                         default:
@@ -204,10 +203,10 @@ namespace Client.Client
                         break;
                     }
                 break;
-                case Chat.Request:
+                case Chat.Chat.Request:
                     OnCallRecieved(splittedMessage[2],splittedMessage[3]);
                 break;
-                case Chat.Response:
+                case Chat.Chat.Response:
                     ParseResponse(splittedMessage[3],splittedMessage[4]);
                     OnCallRequestResponded(splittedMessage[3]);
                 break;
@@ -218,10 +217,10 @@ namespace Client.Client
         {
             switch (response)
             {
-                case Chat.Accept:
+                case Chat.Chat.Accept:
                     StartVoiceChat(address);
                 break;
-                case Chat.Decline:
+                case Chat.Chat.Decline:
                 break;
             }
         }
@@ -258,7 +257,7 @@ namespace Client.Client
 
         private void SendUdpData(byte[] buf, int bytesRecorded)
         {
-            var state = new Chat.StateObject
+            var state = new Chat.Chat.StateObject
             {
                 WorkSocket = clientSocket
             };
@@ -268,13 +267,13 @@ namespace Client.Client
 
         private void ReceiveUdpData()
         {
-            var state = new Chat.StateObject
+            var state = new Chat.Chat.StateObject
             {
                 WorkSocket = clientSocket
             };
             
             var endPoint = (EndPoint) remoteEndPoint;
-            clientSocket.BeginReceiveFrom(state.Buffer, 0, Chat.StateObject.BufferSize, SocketFlags.None, ref endPoint, OnUdpRecieve, state);
+            clientSocket.BeginReceiveFrom(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, SocketFlags.None, ref endPoint, OnUdpRecieve, state);
         }
 
         /// <summary>
@@ -284,8 +283,8 @@ namespace Client.Client
         /// <param name="recipient"></param>
         public void SendMessage(string message,string recipient)
         {
-            var str = string.Format("{0}|{1}|{2}|{3}",Chat.Message, recipient, UserName, message);
-            var bytes = Encoding.ASCII.GetBytes(str);
+            var str = string.Format("{0}|{1}|{2}|{3}",Chat.Chat.Message, recipient, UserName, message);
+            var bytes = Encoding.Unicode.GetBytes(str);
             server.Client.Send(bytes);
         }
         /// <summary>
@@ -294,8 +293,8 @@ namespace Client.Client
         /// <param name="recipient"></param>
         public void SendChatRequest(string recipient)
         {
-            var str = string.Format("{0}|{1}|{2}",Chat.Request, recipient, UserName);
-            var bytes = Encoding.ASCII.GetBytes(str);
+            var str = string.Format("{0}|{1}|{2}",Chat.Chat.Request, recipient, UserName);
+            var bytes = Encoding.Unicode.GetBytes(str);
             server.Client.Send(bytes);
         }
 
@@ -319,12 +318,17 @@ namespace Client.Client
             server.Client.Close();
         }
 
+        public void EndChat()
+        {
+            clientSocket.Close();
+        }
+
 
         public void AnswerIncomingCall(string caller, string address, string answer)
         {
-            var str = string.Format("{0}|{1}|{2}|{3}", Chat.Response, caller, UserName, answer);
-            var bytes = Encoding.ASCII.GetBytes(str);
-            if (answer == Chat.Accept)
+            var str = string.Format("{0}|{1}|{2}|{3}", Chat.Chat.Response, caller, UserName, answer);
+            var bytes = Encoding.Unicode.GetBytes(str);
+            if (answer == Chat.Chat.Accept)
                 StartVoiceChat(address);
             server.Client.Send(bytes);
         }

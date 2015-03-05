@@ -1,7 +1,7 @@
 ﻿using System.Net.Sockets;
 using System.Text;
 
-namespace ChatLibrary
+namespace Chat
 {
     public static class Chat
     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using ChatLibrary;
 using Client.Client;
 
 namespace Client.UI
@@ -23,7 +22,7 @@ namespace Client.UI
             ChatClient.CallRecieved += ChatClient_CallRecieved;
             ChatClient.CallRequestResponded += ChatClient_CallRequestResponded;
             ChatClient.Init();
-            Text = ChatClient.UserName + @"Connected to " + ChatClient.ServerAddress;
+            Text = string.Format("{0} connected to {1}", ChatClient.UserName, ChatClient.ServerAddress);
             SetButtons();
         }
 
@@ -32,10 +31,10 @@ namespace Client.UI
             var message = (string) sender;
             switch (message)
             {
-                case Chat.Accept:
-                    callForm.SetControl(FormType.Conversation);
+                case Chat.Chat.Accept:
+                    StartConversation();
                 break;
-                case Chat.Decline:
+                case Chat.Chat.Decline:
                     callForm.Close();
                 break;
             }
@@ -64,7 +63,9 @@ namespace Client.UI
 
                 var page = FindTabPage(args.Message) ?? AddTabPage(args.Message);
                 var time = DateTime.Now.ToString("HH:mm:ss");
+               
                 page.DialogBox.AppendText(string.Format("[{0}] {1}", time, message));
+                page.DialogBox.AppendText(Environment.NewLine);
             }
             
         }
@@ -97,7 +98,15 @@ namespace Client.UI
             else
             {
                 lbUsers.Items.Clear();
-                tcChat.GlobalPage.DialogBox.AppendText(string.Format("{0} {1}\n", userInfo[0], userInfo[1]));
+                var connStr = string.Format("{0} {1}", userInfo[0], userInfo[1]);
+                tcChat.GlobalPage.DialogBox.AppendText(connStr);
+                tcChat.GlobalPage.DialogBox.AppendText(Environment.NewLine);
+                var userPage = FindTabPage(userInfo[0]);
+                if (userPage != null)
+                {
+                    userPage.DialogBox.AppendText(connStr);
+                    userPage.DialogBox.AppendText(Environment.NewLine);
+                }
                 if (list == string.Empty)
                     return;
                 var users = list.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
@@ -124,19 +133,33 @@ namespace Client.UI
 
             callForm = new CallForm(args.Message, FormType.Incoming);
             var dialogResult = callForm.ShowDialog() == DialogResult.OK 
-                ? Chat.Accept : Chat.Decline;
+                ? Chat.Chat.Accept : Chat.Chat.Decline;
             ChatClient.AnswerIncomingCall(args.Message, address, dialogResult);
             switch (dialogResult)
             {
-                case Chat.Accept:
-                    callForm.SetControl(FormType.Conversation);
-                    callForm.ShowDialog();
+                case Chat.Chat.Accept:
+                    StartConversation();
                     break;
-                case Chat.Decline:
+                case Chat.Chat.Decline:
                     callForm.Close();
                     break;
             }
         }
+
+        private void StartConversation()
+        {
+            callForm.SetControl(FormType.Conversation);
+            if (!callForm.Visible)
+                callForm.ShowDialog();
+            callForm.Closed += callForm_Closed;
+        }
+
+        private void callForm_Closed(object sender, EventArgs e)
+        {
+            ChatClient.EndChat();
+            callForm.Closed -= callForm_Closed;
+        }
+
 
         private void sendMessage_Click(object sender, EventArgs e)
         {
@@ -146,13 +169,14 @@ namespace Client.UI
         private void SendMessage()
         {
             var selectedUser = lbUsers.SelectedItem.ToString();
-            var message = ChatClient.UserName + ": " + messageTextbox.Text + "\n";
+            var message = string.Format("{0}: {1}", ChatClient.UserName, messageTextbox.Text);
             ChatClient.SendMessage(message, selectedUser);
             var page = FindTabPage(selectedUser) ?? AddTabPage(selectedUser);
             tcChat.SelectedTab = page;
             var time = DateTime.Now.ToString("HH:mm:ss");
-            page.DialogBox.AppendText(string.Format("{0} {1}",time,message));
-            messageTextbox.Clear();
+            page.DialogBox.AppendText(string.Format("[{0}] {1}", time, message));
+            page.DialogBox.AppendText(Environment.NewLine);
+            messageTextbox.Text = String.Empty;
         }
 
         private void lbUsers_SelectedValueChanged(object sender, EventArgs e)

@@ -34,6 +34,7 @@ namespace Server
                     server.ClientConnected += ServerOnClientConnected;
                     server.ClientDisconnected += ServerOnClientDisconnected;
                     server.StartServer();
+                    SetControls(false);
                     WriteToEventLog(Log.Message(Log.Server, " on port " + port,Log.Start),EventLogEntryType.Information);
                 }
                 catch
@@ -48,8 +49,16 @@ namespace Server
                 if (server == null) 
                     return;
                 server.StopServer();
+                SetControls(true);
                 WriteToEventLog(Log.Message(Log.Server," ",Log.Stop),EventLogEntryType.Information);
             }
+        }
+
+        private void SetControls(bool enabled)
+        {
+            tbPort.Enabled = enabled;
+            tbServerName.Enabled = enabled;
+            cbInterfaces.Enabled = enabled;
         }
 
         private void ServerOnClientDisconnected(object sender, EventArgs e)

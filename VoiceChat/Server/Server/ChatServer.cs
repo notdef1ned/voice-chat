@@ -6,7 +6,6 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using ChatLibrary;
 
 namespace Server.Server
 {
@@ -74,12 +73,9 @@ namespace Server.Server
         public void StopServer()
         {
             isRunning = false;
-
             if (tcpServer == null)
                 return;
-
             userNames.Clear();
-            
             tcpServer.Stop();
         }
 
@@ -100,30 +96,30 @@ namespace Server.Server
             // update clients list
             var bytes = new byte[1024];
             var bytesRead = socket.Receive(bytes);
-            var str = Encoding.ASCII.GetString(bytes, 0, bytesRead);
+            var str = Encoding.Unicode.GetString(bytes, 0, bytesRead);
 
             OnClientConnected(socket, str);
             
             userNames.Add(str, socket);
 
             foreach (var user in userNames)
-                SendUsersList(user.Value, user.Key, str, Chat.Connected);
+                SendUsersList(user.Value, user.Key, str, Chat.Chat.Connected);
            
-            var state = new Chat.StateObject
+            var state = new Chat.Chat.StateObject
             {
                 WorkSocket = socket
             };
             
-            socket.BeginReceive(state.Buffer, 0, Chat.StateObject.BufferSize, 0,
+            socket.BeginReceive(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, 0,
             OnReceive, state);
             
         }
 
         public void SendUsersList(Socket clientSocket, string userName, string changedUser, string state)
         {
-            var userList = string.Format("{0}|{1}|{2}|{3}|{4}", Chat.Message, Chat.Server,
+            var userList = string.Format("{0}|{1}|{2}|{3}|{4}", Chat.Chat.Message, Chat.Chat.Server,
                 string.Join(",", userNames.Keys.Where(u => u != userName).ToArray()),changedUser,state);
-            var bytes = Encoding.ASCII.GetBytes(userList);
+            var bytes = Encoding.Unicode.GetBytes(userList);
             clientSocket.Send(bytes);
         }
 
@@ -133,7 +129,7 @@ namespace Server.Server
 
         public void OnReceive(IAsyncResult ar)
         {
-            var state = ar.AsyncState as Chat.StateObject;
+            var state = ar.AsyncState as Chat.Chat.StateObject;
             if (state == null)
                 return;
             var handler = state.WorkSocket;
@@ -148,7 +144,7 @@ namespace Server.Server
                 ParseRequest(state,bytesRead,handler);
                 
                 // Restore receiving
-                handler.BeginReceive(state.Buffer, 0, Chat.StateObject.BufferSize, 0,
+                handler.BeginReceive(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, 0,
                 OnReceive, state);
 
             }
@@ -159,9 +155,9 @@ namespace Server.Server
             }
         }
 
-        private void ParseRequest(Chat.StateObject state,int bytesRead, Socket incomingClient)
+        private void ParseRequest(Chat.Chat.StateObject state,int bytesRead, Socket incomingClient)
         {
-            var recievedString = Encoding.ASCII.GetString(state.Buffer, 0, bytesRead);
+            var recievedString = Encoding.Unicode.GetString(state.Buffer, 0, bytesRead);
             var str = recievedString.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
             
             var messageType = str[0];
@@ -169,7 +165,7 @@ namespace Server.Server
 
             switch (messageType)
             {
-                case Chat.Heartbeat:
+                case Chat.Chat.Heartbeat:
                     if (!incomingClient.Connected)
                         DisconnectClient(incomingClient);
                 break;
@@ -179,7 +175,7 @@ namespace Server.Server
                     if (userNames.TryGetValue(str[1], out clientSocket))
                     {
                         recievedString += "|" + GetRemoteAddress(sender);
-                        var bytes = Encoding.ASCII.GetBytes(recievedString);
+                        var bytes = Encoding.Unicode.GetBytes(recievedString);
                         clientSocket.Send(bytes);
                     }
                 break;
@@ -209,7 +205,7 @@ namespace Server.Server
             userNames.Remove(userName);
 
             foreach (var user in userNames)
-                SendUsersList(user.Value, user.Key, userName, Chat.Disconnected);
+                SendUsersList(user.Value, user.Key, userName, Chat.Chat.Disconnected);
         }
 
        

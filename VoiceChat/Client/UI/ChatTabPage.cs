@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Client
+namespace Client.UI
 {
     public class ChatTabPage : TabPage
     {
@@ -8,7 +8,7 @@ namespace Client
 
         public ChatTabPage()
         {
-            DialogBox = new TextBox {WordWrap = true, Dock = DockStyle.Fill, Multiline = true};
+            DialogBox = new TextBox {WordWrap = true, Dock = DockStyle.Fill, Multiline = true, ReadOnly = true,ScrollBars = ScrollBars.Vertical};
             Controls.Add(DialogBox);
         }
     }
