@@ -8,7 +8,7 @@ namespace Client.UI
 
         public ChatTabControl()
         {
-            GlobalPage = new ChatTabPage {Text = Chat.Chat.Global};
+            GlobalPage = new ChatTabPage {Text = Chat.Helper.ChatHelper.Global};
             TabPages.Add(GlobalPage);
         }
     }

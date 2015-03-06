@@ -1,9 +1,9 @@
 ﻿using System.Net.Sockets;
 using System.Text;
 
-namespace Chat
+namespace Chat.Helper
 {
-    public static class Chat
+    public static class ChatHelper
     {
         #region Fields
 
@@ -22,6 +22,7 @@ namespace Chat
 
         public const string Accept = "accept";
         public const string Decline = "decline";
+        public const string EndCall = "end";
 
         #endregion
 

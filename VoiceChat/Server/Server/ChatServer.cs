@@ -6,6 +6,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Chat.Helper;
 
 namespace Server.Server
 {
@@ -103,21 +104,21 @@ namespace Server.Server
             userNames.Add(str, socket);
 
             foreach (var user in userNames)
-                SendUsersList(user.Value, user.Key, str, Chat.Chat.Connected);
+                SendUsersList(user.Value, user.Key, str, ChatHelper.Connected);
            
-            var state = new Chat.Chat.StateObject
+            var state = new ChatHelper.StateObject
             {
                 WorkSocket = socket
             };
             
-            socket.BeginReceive(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, 0,
+            socket.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0,
             OnReceive, state);
             
         }
 
         public void SendUsersList(Socket clientSocket, string userName, string changedUser, string state)
         {
-            var userList = string.Format("{0}|{1}|{2}|{3}|{4}", Chat.Chat.Message, Chat.Chat.Server,
+            var userList = string.Format("{0}|{1}|{2}|{3}|{4}", ChatHelper.Message, ChatHelper.Server,
                 string.Join(",", userNames.Keys.Where(u => u != userName).ToArray()),changedUser,state);
             var bytes = Encoding.Unicode.GetBytes(userList);
             clientSocket.Send(bytes);
@@ -129,7 +130,7 @@ namespace Server.Server
 
         public void OnReceive(IAsyncResult ar)
         {
-            var state = ar.AsyncState as Chat.Chat.StateObject;
+            var state = ar.AsyncState as ChatHelper.StateObject;
             if (state == null)
                 return;
             var handler = state.WorkSocket;
@@ -144,28 +145,26 @@ namespace Server.Server
                 ParseRequest(state,bytesRead,handler);
                 
                 // Restore receiving
-                handler.BeginReceive(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, 0,
+                handler.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0,
                 OnReceive, state);
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 DisconnectClient(handler);
-                
             }
         }
 
-        private void ParseRequest(Chat.Chat.StateObject state,int bytesRead, Socket incomingClient)
+        private void ParseRequest(ChatHelper.StateObject state,int bytesRead, Socket incomingClient)
         {
             var recievedString = Encoding.Unicode.GetString(state.Buffer, 0, bytesRead);
             var str = recievedString.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
             
             var messageType = str[0];
             
-
             switch (messageType)
             {
-                case Chat.Chat.Heartbeat:
+                case ChatHelper.Heartbeat:
                     if (!incomingClient.Connected)
                         DisconnectClient(incomingClient);
                 break;
@@ -178,14 +177,7 @@ namespace Server.Server
                     }
                 break;
             }
-            
-            
-
-            
         }
-
-
-
 
 
         public void DisconnectClient(Socket clientSocket)
@@ -197,15 +189,10 @@ namespace Server.Server
             userNames.Remove(userName);
 
             foreach (var user in userNames)
-                SendUsersList(user.Value, user.Key, userName, Chat.Chat.Disconnected);
+                SendUsersList(user.Value, user.Key, userName, ChatHelper.Disconnected);
         }
 
-       
-
-        #endregion
-
-
-
+       #endregion
 
         protected virtual void OnClientConnected(Socket clientSocket, string name)
         {

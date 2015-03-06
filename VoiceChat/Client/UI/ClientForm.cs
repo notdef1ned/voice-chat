@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using Chat.Helper;
 using Client.Client;
 
 namespace Client.UI
@@ -11,6 +12,8 @@ namespace Client.UI
 
         private delegate void SetUserList(object sender, EventArgs e);
         private delegate void RecieveMessage(object sender, EventArgs e);
+
+        private delegate void EndConversation();
         
         public ChatClient ChatClient { get; set; }
         public ClientForm(ChatClient client)
@@ -31,11 +34,11 @@ namespace Client.UI
             var message = (string) sender;
             switch (message)
             {
-                case Chat.Chat.Accept:
+                case ChatHelper.Accept:
                     StartConversation();
                 break;
-                case Chat.Chat.Decline:
-                    callForm.Close();
+                default:
+                    StopConversation();
                 break;
             }
         }
@@ -133,14 +136,14 @@ namespace Client.UI
 
             callForm = new CallForm(args.Message, FormType.Incoming);
             var dialogResult = callForm.ShowDialog() == DialogResult.OK 
-                ? Chat.Chat.Accept : Chat.Chat.Decline;
+                ? ChatHelper.Accept : ChatHelper.Decline;
             ChatClient.AnswerIncomingCall(args.Message, address, dialogResult);
             switch (dialogResult)
             {
-                case Chat.Chat.Accept:
+                case ChatHelper.Accept:
                     StartConversation();
                     break;
-                case Chat.Chat.Decline:
+                case ChatHelper.Decline:
                     callForm.Close();
                     break;
             }
@@ -154,9 +157,22 @@ namespace Client.UI
             callForm.Closed += callForm_Closed;
         }
 
+        private void StopConversation()
+        {
+            if (callForm.InvokeRequired)
+            {
+                EndConversation d = StopConversation;
+                Invoke(d);
+            }
+            else
+            {
+                callForm.Close();
+            }
+        }
+
         private void callForm_Closed(object sender, EventArgs e)
         {
-            ChatClient.EndChat();
+            ChatClient.EndChat(true);
             callForm.Closed -= callForm_Closed;
         }
 
@@ -208,7 +224,7 @@ namespace Client.UI
         }
 
         private void messageTextbox_KeyDown(object sender, KeyEventArgs e)
-        {
+      {
             if (e.KeyCode == Keys.Enter && sendMessageButton.Enabled)
                 SendMessage();
         }

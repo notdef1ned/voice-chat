@@ -1,11 +1,11 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Chat.Helper;
 using NAudio.Wave;
 using Timer = System.Timers.Timer;
 
@@ -24,7 +24,8 @@ namespace Client.Client
         private readonly IPEndPoint localEndPoint;
         private IPEndPoint remoteEndPoint;
         private Thread udpReceiveThread;
-        private Thread heartBeatThread;
+        //private Thread heartBeatThread;
+        private string udpSubscriber;
         #endregion
 
         #region Events
@@ -39,12 +40,11 @@ namespace Client.Client
         public string ClientAddress { get; set; }
         public string ServerAddress { get; set; }
         public string UserName { get; set; }
-
         public bool IsConnected { get; set; }
 
         #endregion
 
-
+        #region Consructor
         /// <summary>
         /// Connect to server
         /// </summary>
@@ -61,7 +61,6 @@ namespace Client.Client
                 clientSocket = new Socket(AddressFamily.InterNetwork,
                     SocketType.Dgram, ProtocolType.Udp);
                 localEndPoint = GetHostEndPoint();
-                clientSocket.Bind(localEndPoint);
                 ServerAddress = serverAddress;
                 UserName = userName;
             }
@@ -74,7 +73,16 @@ namespace Client.Client
             var bytes = Encoding.Unicode.GetBytes(userName);
             server.Client.Send(bytes);
         }
+#endregion
 
+
+        #region Methods
+
+
+        private void BindSocket()
+        {
+            clientSocket.Bind(localEndPoint);
+        }
 
         private IPEndPoint GetHostEndPoint()
         {
@@ -83,7 +91,7 @@ namespace Client.Client
             if (ipAddress == null) 
                 return null;
             var random = new Random();
-            var endPoint = new IPEndPoint(ipAddress,random.Next(65520,65530) );
+            var endPoint = new IPEndPoint(ipAddress,random.Next(65000,65536));
             ClientAddress = string.Format("{0}:{1}",endPoint.Address,endPoint.Port);
             return endPoint;
         }
@@ -91,7 +99,7 @@ namespace Client.Client
 
         public void Init()
         {
-            var state = new Chat.Chat.StateObject
+            var state = new ChatHelper.StateObject
             {
                 WorkSocket = server.Client
             };
@@ -101,11 +109,11 @@ namespace Client.Client
 
             //heartBeatThread = new Thread(HeartBeat);
             //heartBeatThread.Start();
-            waveProvider = new BufferedWaveProvider(new WaveFormat(8000, 16, 2));
+            waveProvider = new BufferedWaveProvider(new WaveFormat(8000, 16, WaveIn.GetCapabilities(0).Channels));
             recievedStream = new WaveOut();
             recievedStream.Init(waveProvider);
 
-            server.Client.BeginReceive(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, 0,
+            server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0,
                 OnReceive, state);
         }
 
@@ -114,7 +122,7 @@ namespace Client.Client
         /// </summary>
         private void HeartBeat()
         {
-            var heartbeat = string.Format("{0}|{1}", Chat.Chat.Heartbeat, UserName);
+            var heartbeat = string.Format("{0}|{1}", ChatHelper.Heartbeat, UserName);
             var bytes = Encoding.Unicode.GetBytes(heartbeat);
             Timer timer = null;
             while (IsConnected)
@@ -132,8 +140,7 @@ namespace Client.Client
                         {
                             server.Client.Disconnect(true);
                         }
-                        
-                    };
+                   };
                 }
                 timer.Enabled = true;
             }
@@ -145,14 +152,14 @@ namespace Client.Client
             var bytes = new byte[1024];
             var bytesRead = server.Client.Receive(bytes);
             var content = Encoding.Unicode.GetString(bytes, 0, bytesRead);
-            var splittedStr = content.Split('|');
-            var list = splittedStr[2];
-            OnUserListReceived(list,splittedStr[3],splittedStr[4]);
+            var info = content.Split('|');
+            var list = info[2];
+            OnUserListReceived(list,info[3],info[4]);
         }
 
         public void OnReceive(IAsyncResult ar)
         {
-            var state = ar.AsyncState as Chat.Chat.StateObject;
+            var state = ar.AsyncState as ChatHelper.StateObject;
             if (state == null)
                 return;
             var handler = state.WorkSocket;
@@ -171,7 +178,7 @@ namespace Client.Client
 
                 ParseMessage(content);
                 
-                server.Client.BeginReceive(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, 0, OnReceive, state);
+                server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0, OnReceive, state);
             }
             catch (SocketException)
             {
@@ -182,7 +189,7 @@ namespace Client.Client
 
         public void OnUdpRecieve(IAsyncResult ar)
         {
-            var state = ar.AsyncState as Chat.Chat.StateObject;
+            var state = ar.AsyncState as ChatHelper.StateObject;
             if (state == null) 
                 return;
             var handler = clientSocket;
@@ -194,15 +201,13 @@ namespace Client.Client
                 recievedStream.Play();
 
                 var ep = (EndPoint)localEndPoint;
-                handler.BeginReceiveFrom(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, SocketFlags.None, ref ep, OnUdpRecieve, state);
+                handler.BeginReceiveFrom(state.Buffer, 0, ChatHelper.StateObject.BufferSize, SocketFlags.None, ref ep, OnUdpRecieve, state);
             }
             catch (Exception)
             {
                 // remote user disconnected
                 clientSocket.Close();
             }
-            
-            
         }
 
         /// <summary>
@@ -211,39 +216,41 @@ namespace Client.Client
         /// <param name="message"></param>
         public void ParseMessage(string message)
         {
-            var splittedMessage = message.Split('|');
-            var interaction = splittedMessage[0];
-            switch (interaction)
+            var info = message.Split('|');
+            var interactionType = info[0];
+            switch (interactionType)
             {
-                case Chat.Chat.Message:
-                    switch (splittedMessage[1])
+                case ChatHelper.Message:
+                    switch (info[1])
                     {
-                        case Chat.Chat.Server:
-                            OnUserListReceived(splittedMessage[2],splittedMessage[3],splittedMessage[4]);
+                        case ChatHelper.Server:
+                            OnUserListReceived(info[2],info[3],info[4]);
                         break;
                         default:
-                            OnMessageReceived(splittedMessage[3], splittedMessage[2]);  
+                            OnMessageReceived(info[3], info[2]);  
                         break;
                     }
                 break;
-                case Chat.Chat.Request:
-                    OnCallRecieved(splittedMessage[2],splittedMessage[3]);
+                case ChatHelper.Request:
+                    OnCallRecieved(info[2],info[3]);
                 break;
-                case Chat.Chat.Response:
-                    ParseResponse(splittedMessage[3],splittedMessage[4]);
-                    OnCallRequestResponded(splittedMessage[3]);
+                case ChatHelper.Response:
+                    ParseResponse(info[2],info[3],info[4]);
+                    OnCallResponseReceived(info[3]);
                 break;
             }
         }
 
-        private void ParseResponse(string response,string address)
+        private void ParseResponse(string user,string response,string address)
         {
             switch (response)
             {
-                case Chat.Chat.Accept:
+                case ChatHelper.Accept:
+                    udpSubscriber = user;
                     StartVoiceChat(address);
                 break;
-                case Chat.Chat.Decline:
+                case ChatHelper.EndCall:
+                    EndChat(false);
                 break;
             }
         }
@@ -254,14 +261,14 @@ namespace Client.Client
             var ip = splittedAddress[0];
             var port = splittedAddress[1];
             
-            remoteEndPoint = new IPEndPoint(IPAddress.Parse(ip),Int32.Parse(port));
+            BindSocket();
 
-            
+            remoteEndPoint = new IPEndPoint(IPAddress.Parse(ip),Int32.Parse(port));
 
             sourceStream = new WaveInEvent
             {
                 DeviceNumber = 0,
-                WaveFormat = new WaveFormat(8000, 16, 2)
+                WaveFormat = new WaveFormat(8000, 16, WaveIn.GetCapabilities(0).Channels)
             };
             
             sourceStream.DataAvailable += sourceStream_DataAvailable;
@@ -274,25 +281,37 @@ namespace Client.Client
         {
             if (sourceStream == null)
                 return;
-            SendUdpData(e.Buffer,e.BytesRecorded);
+            SendUdpData(e.Buffer, e.BytesRecorded);
         }
 
 
         private void SendUdpData(byte[] buf, int bytesRecorded)
         {
-            var ep = remoteEndPoint as EndPoint;
-            clientSocket.SendTo(buf, 0, bytesRecorded, SocketFlags.None, ep);
+            try
+            {
+                var ep = remoteEndPoint as EndPoint;
+                clientSocket.SendTo(buf, 0, bytesRecorded, SocketFlags.None, ep);
+            }
+            catch (Exception)
+            {
+                sourceStream.StopRecording();    
+            }
         }
 
         private void ReceiveUdpData()
         {
-            var state = new Chat.Chat.StateObject
+            try
             {
-                WorkSocket = clientSocket
-            };
-            var ep = remoteEndPoint as EndPoint;
-            clientSocket.BeginReceiveFrom(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, SocketFlags.None, ref ep,
-                OnUdpRecieve, state);
+                var state = new ChatHelper.StateObject { WorkSocket = clientSocket };
+                var ep = remoteEndPoint as EndPoint;
+                clientSocket.BeginReceiveFrom(state.Buffer, 0, ChatHelper.StateObject.BufferSize, SocketFlags.None, ref ep,
+                    OnUdpRecieve, state);
+            }
+            catch (Exception)
+            {
+                clientSocket.Close();
+            }
+            
         }
 
         /// <summary>
@@ -302,7 +321,7 @@ namespace Client.Client
         /// <param name="recipient"></param>
         public void SendMessage(string message,string recipient)
         {
-            var str = string.Format("{0}|{1}|{2}|{3}",Chat.Chat.Message, recipient, UserName, message);
+            var str = string.Format("{0}|{1}|{2}|{3}",ChatHelper.Message, recipient, UserName, message);
             var bytes = Encoding.Unicode.GetBytes(str);
             server.Client.Send(bytes);
         }
@@ -312,22 +331,17 @@ namespace Client.Client
         /// <param name="recipient"></param>
         public void SendChatRequest(string recipient)
         {
-            var str = string.Format("{0}|{1}|{2}|{3}",Chat.Chat.Request, recipient, UserName,ClientAddress);
+            var str = string.Format("{0}|{1}|{2}|{3}",ChatHelper.Request, recipient, UserName,ClientAddress);
             var bytes = Encoding.Unicode.GetBytes(str);
             server.Client.Send(bytes);
         }
 
-
-        private void OnUserListReceived(string str, string userStr, string state) 
+        private void SendChatEndRequest()
         {
-            var handler = UserListReceived;
-            if (handler != null) handler(str, new MessageEventArgs(string.Format("{0}|{1}",userStr,state)));
-        }
-
-        protected virtual void OnMessageReceived(string str, string sender)
-        {
-            var handler = MessageReceived;
-            if (handler != null) handler(str, new MessageEventArgs(sender));
+            var str = string.Format("{0}|{1}|{2}|{3}|{4}", ChatHelper.Response, udpSubscriber, UserName,
+                ChatHelper.EndCall, ClientAddress);
+            var bytes = Encoding.Unicode.GetBytes(str);
+            server.Client.Send(bytes);
         }
 
 
@@ -337,34 +351,57 @@ namespace Client.Client
             server.Client.Close();
         }
 
-        public void EndChat()
+        public void EndChat(bool requestNeeded)
         {
+            if (requestNeeded)
+                SendChatEndRequest();
             clientSocket.Close();
         }
 
 
         public void AnswerIncomingCall(string caller, string address, string answer)
         {
-            var str = string.Format("{0}|{1}|{2}|{3}|{4}", Chat.Chat.Response, caller, UserName, answer, ClientAddress);
+            var str = string.Format("{0}|{1}|{2}|{3}|{4}", ChatHelper.Response, caller, UserName, answer, ClientAddress);
             var bytes = Encoding.Unicode.GetBytes(str);
-            if (answer == Chat.Chat.Accept)
+            if (answer == ChatHelper.Accept)
+            {
+                udpSubscriber = caller;
                 StartVoiceChat(address);
+            }
             server.Client.Send(bytes);
         }
 
-       
+        #endregion
 
-        protected virtual void OnCallRecieved(string caller,string address)
+        #region Event Invocators
+
+        protected virtual void OnUserListReceived(string str, string userStr, string state)
+        {
+            var handler = UserListReceived;
+            if (handler != null) handler(str, new MessageEventArgs(string.Format("{0}|{1}", userStr, state)));
+        }
+
+        protected virtual void OnMessageReceived(string str, string sender)
+        {
+            var handler = MessageReceived;
+            if (handler != null) handler(str, new MessageEventArgs(sender));
+        }
+
+        protected virtual void OnCallRecieved(string caller, string address)
         {
             var handler = CallRecieved;
             if (handler != null) handler(address, new MessageEventArgs(caller));
         }
 
-        protected virtual void OnCallRequestResponded(string response)
+        protected virtual void OnCallResponseReceived(string response)
         {
             var handler = CallRequestResponded;
             if (handler != null) handler(response, EventArgs.Empty);
         }
+
+        #endregion
+
+       
     }
 
     

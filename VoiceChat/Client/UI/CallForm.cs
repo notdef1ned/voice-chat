@@ -41,15 +41,15 @@ namespace Client.UI
                 {
                     case FormType.Conversation:
                         Control = new Conversation();
-                        Text = string.Format("{0}: {1}", Chat.Chat.Conversation, caller);
+                        Text = string.Format("{0}: {1}", Chat.Helper.ChatHelper.Conversation, caller);
                         break;
                     case FormType.Incoming:
                         Control = new IncomingCall();
-                        Text = string.Format("{0}: {1}", Chat.Chat.IncomingCall, caller);
+                        Text = string.Format("{0}: {1}", Chat.Helper.ChatHelper.IncomingCall, caller);
                         break;
                     case FormType.Outcoming:
                         Control = new OutcomingCall();
-                        Text = string.Format("{0}: {1}", Chat.Chat.OutcomingCall, caller);
+                        Text = string.Format("{0}: {1}", Chat.Helper.ChatHelper.OutcomingCall, caller);
                         break;
                 }
                 if (Control == null) 
