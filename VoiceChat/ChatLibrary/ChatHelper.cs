@@ -44,7 +44,7 @@ namespace Chat
             // Client  socket.
             public Socket WorkSocket = null;
             // Size of receive buffer.
-            public const int BufferSize = 100000000;
+            public const int BufferSize = 65536;
             // Receive buffer.
             public byte[] Buffer = new byte[BufferSize];
             // Received data string.

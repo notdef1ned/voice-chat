@@ -20,6 +20,7 @@ namespace Client.Client
         
         private WaveInEvent sourceStream;
         private WaveOut recievedStream;
+        private BufferedWaveProvider waveProvider;
         private readonly IPEndPoint localEndPoint;
         private IPEndPoint remoteEndPoint;
         private Thread udpReceiveThread;
@@ -100,6 +101,9 @@ namespace Client.Client
 
             //heartBeatThread = new Thread(HeartBeat);
             //heartBeatThread.Start();
+            waveProvider = new BufferedWaveProvider(new WaveFormat(8000, 16, 2));
+            recievedStream = new WaveOut();
+            recievedStream.Init(waveProvider);
 
             server.Client.BeginReceive(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, 0,
                 OnReceive, state);
@@ -175,10 +179,6 @@ namespace Client.Client
             }
         }
 
-        public void OnUdpSend(IAsyncResult ar)
-        {
-
-        }
 
         public void OnUdpRecieve(IAsyncResult ar)
         {
@@ -186,16 +186,22 @@ namespace Client.Client
             if (state == null) 
                 return;
             var handler = clientSocket;
-           
-            var bytesRead = handler.EndReceive(ar);
+
+            try
+            {
+                var bytesRead = handler.EndReceive(ar);
+                waveProvider.AddSamples(state.Buffer, 0, bytesRead);
+                recievedStream.Play();
+
+                var ep = (EndPoint)localEndPoint;
+                handler.BeginReceiveFrom(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, SocketFlags.None, ref ep, OnUdpRecieve, state);
+            }
+            catch (Exception)
+            {
+                // remote user disconnected
+                clientSocket.Close();
+            }
             
-            IWaveProvider provider = new RawSourceWaveStream(
-                         new MemoryStream(state.Buffer,0,bytesRead), new WaveFormat());
-            recievedStream.Init(provider);
-            recievedStream.Play();
-            
-            var ep = (EndPoint) localEndPoint;
-            handler.BeginReceiveFrom(state.Buffer, 0, Chat.Chat.StateObject.BufferSize, SocketFlags.None, ref ep, OnUdpRecieve, state);
             
         }
 
@@ -250,12 +256,12 @@ namespace Client.Client
             
             remoteEndPoint = new IPEndPoint(IPAddress.Parse(ip),Int32.Parse(port));
 
-            recievedStream = new WaveOut(WaveCallbackInfo.FunctionCallback());
+            
 
             sourceStream = new WaveInEvent
             {
                 DeviceNumber = 0,
-                WaveFormat = new WaveFormat(44100, WaveIn.GetCapabilities(0).Channels)
+                WaveFormat = new WaveFormat(8000, 16, 2)
             };
             
             sourceStream.DataAvailable += sourceStream_DataAvailable;
@@ -274,12 +280,8 @@ namespace Client.Client
 
         private void SendUdpData(byte[] buf, int bytesRecorded)
         {
-            var state = new Chat.Chat.StateObject
-            {
-                WorkSocket = clientSocket
-            };
             var ep = remoteEndPoint as EndPoint;
-            clientSocket.BeginSendTo(buf, 0, bytesRecorded, SocketFlags.None, ep, OnUdpSend, state);
+            clientSocket.SendTo(buf, 0, bytesRecorded, SocketFlags.None, ep);
         }
 
         private void ReceiveUdpData()

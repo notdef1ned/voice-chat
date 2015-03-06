@@ -185,12 +185,6 @@ namespace Server.Server
         }
 
 
-        private static string GetRemoteAddress(Socket clientSocket)
-        {
-            var endPoint = (IPEndPoint) clientSocket.RemoteEndPoint;
-            return endPoint.Address + ":" + endPoint.Port;
-        }
-
 
 
 
