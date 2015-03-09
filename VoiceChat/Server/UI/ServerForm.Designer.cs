@@ -165,6 +165,7 @@
             this.ClientSize = new System.Drawing.Size(708, 429);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ServerForm";
+            this.ShowIcon = false;
             this.Text = "Voice Chat Server";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ServerForm_FormClosing);
             this.connectionInfo.ResumeLayout(false);

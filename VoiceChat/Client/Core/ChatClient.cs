@@ -355,7 +355,8 @@ namespace Client.Core
         {
             IsConnected = false;
             var data = new Data {Command = Command.Disconnect};
-            server.Client.Send(data.ToByte());
+            if (server.Client.Connected)
+                server.Client.Send(data.ToByte());
         }
         /// <summary>
         /// Ends UDP connection

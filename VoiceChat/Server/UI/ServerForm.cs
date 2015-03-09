@@ -32,14 +32,20 @@ namespace Server.UI
                     server = new ChatServer(port, cbInterfaces.SelectedItem,tbServerName.Text);
                     server.ClientConnected += ServerOnClientConnected;
                     server.ClientDisconnected += ServerOnClientDisconnected;
-                    server.StartServer();
-                    SetControls(false);
-                   
+                    var serverName = tbServerName.Text;
+                    if (string.IsNullOrWhiteSpace(serverName))
+                    {
+                        ShowError();
+                    }
+                    else
+                    {
+                        server.StartServer();
+                        SetControls(false);
+                    }
                 }
                 catch
                 {
-                    MessageBox.Show(@"Please enter valid port number");
-                    cbStartStop.Checked = false;
+                   ShowError();
                 }
             }
 
@@ -50,6 +56,12 @@ namespace Server.UI
                 server.StopServer();
                 SetControls(true);
             }
+        }
+
+        private void ShowError()
+        {
+            MessageBox.Show(@"Please enter valid port number and/or server name");
+            cbStartStop.Checked = false;
         }
 
         private void SetControls(bool enabled)
