@@ -25,7 +25,6 @@ namespace Client.Core
         private IPEndPoint remoteEndPoint;
         private Thread udpReceiveThread;
         private Thread tcpRecieveThread;
-        //private Thread heartBeatThread;
         private string udpSubscriber;
         private bool udpConnectionActive;
         #endregion
@@ -72,7 +71,7 @@ namespace Client.Core
                 MessageBox.Show(@"Unable to connect to server");
                 return;
             }
-           // Send username to server
+            // Send username to server
             var bytes = Encoding.Unicode.GetBytes(userName);
             server.Client.Send(bytes);
         }
@@ -126,35 +125,6 @@ namespace Client.Core
 
             server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0,
                 OnReceive, state);
-        }
-
-        /// <summary>
-        /// Heartbeat request to server
-        /// </summary>
-        private void HeartBeat()
-        {
-            var data = new Data {Command = Command.Heartbeat, From = UserName};
-            Timer timer = null;
-            while (IsConnected)
-            {
-                if (timer == null)
-                {
-                    timer = new Timer(1000);
-                    timer.Elapsed += (sender, args) =>
-                    {
-                        try
-                        {
-                            server.Client.Send(data.ToByte());
-                        }
-                        catch
-                        {
-                            server.Client.Disconnect(true);
-                        }
-                   };
-                }
-                timer.Enabled = true;
-            }
-            
         }
 
         private bool ReceiveUsersList()
@@ -221,42 +191,44 @@ namespace Client.Core
             }
             catch (Exception)
             {
-                // remote user disconnected
-                //clientSocket.Close();
+                udpConnectionActive = false;
             }
         }
 
         /// <summary>
         /// Parse received message
         /// </summary>
-        /// <param name="message"></param>
-        public void ParseMessage(Data message)
+        /// <param name="data"></param>
+        public void ParseMessage(Data data)
         {
-            switch (message.Command)
+            switch (data.Command)
             {
                 case Command.SendMessage:
-                    OnMessageReceived(message.Message, message.From);
+                    OnMessageReceived(data.Message, data.From);
                 break;
-
                 case Command.Broadcast:
-                    OnUserListReceived(message.Message.Split('|'));
+                    OnUserListReceived(data.Message.Split('|'));
                 break;
-
                 case Command.Call:
                     if (!udpConnectionActive)
-                        OnCallRecieved(message.From, message.ClientAddress);
+                        OnCallRecieved(data.From, data.ClientAddress);
                     SendResponse(Command.Busy);
                 break;
-
                 case Command.AcceptCall:
                 case Command.CancelCall:
                 case Command.EndCall:
-                    ParseResponse(message.From,message.Command,message.ClientAddress);
-                    OnCallResponseReceived(message.Command);
+                case Command.Busy:
+                    ParseResponse(data.From, data.Command, data.ClientAddress);
+                    OnCallResponseReceived(data.Command);
                 break;
             }
         }
-
+        /// <summary>
+        /// Parse call response
+        /// </summary>
+        /// <param name="user">Caller</param>
+        /// <param name="response">Response</param>
+        /// <param name="address">Caller Address</param>
         private void ParseResponse(string user,Command response,string address)
         {
             switch (response)
@@ -266,11 +238,16 @@ namespace Client.Core
                     StartVoiceChat(address);
                 break;
                 case Command.EndCall:
+                case Command.CancelCall:
+                case Command.Busy:
                     EndChat(false);
                 break;
             }
         }
-
+        /// <summary>
+        /// Open socket for voice chat
+        /// </summary>
+        /// <param name="address"></param>
         private void StartVoiceChat(string address)
         {
             var splittedAddress = address.Split(':');
@@ -333,7 +310,7 @@ namespace Client.Core
             }
             catch (Exception)
             {
-                //clientSocket.Close();
+                udpConnectionActive = false;
             }
             
         }
@@ -430,7 +407,6 @@ namespace Client.Core
 
         #endregion
 
-       
     }
 
     

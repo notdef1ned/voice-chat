@@ -34,6 +34,7 @@
             // btnReject
             // 
             this.btnReject.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReject.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnReject.Location = new System.Drawing.Point(123, 127);
             this.btnReject.Name = "btnReject";
             this.btnReject.Size = new System.Drawing.Size(137, 42);

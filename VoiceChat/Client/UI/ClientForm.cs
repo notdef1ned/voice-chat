@@ -192,7 +192,7 @@ namespace Client.UI
 
         private void SendMessage()
         {
-            var selectedUser = lbUsers.SelectedItem.ToString();
+            var selectedUser = tcChat.SelectedTab.Text;
             var message = string.Format("{0}: {1}", ChatClient.UserName, messageTextbox.Text);
             ChatClient.SendMessage(message, selectedUser);
             
@@ -267,6 +267,20 @@ namespace Client.UI
                 if (str != NoUsersOnline)
                     toolTip.SetToolTip(lbUsers, NoUsersOnline);
             }
+        }
+
+        private void tcChat_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Right)
+                return;
+            closeItem.Enabled = tcChat.SelectedTab != null 
+                                && tcChat.SelectedTab != tcChat.GlobalPage;
+            contextMenu.Show(Cursor.Position);
+        }
+
+        private void closeItem_Click(object sender, EventArgs e)
+        {
+             tcChat.TabPages.Remove(tcChat.SelectedTab);
         }
     }
 }

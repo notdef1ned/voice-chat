@@ -69,7 +69,6 @@ namespace ChatLibrary.Helper
             {
                 From = Encoding.Unicode.GetString(data, next, senderNameLength);
                 next += senderNameLength;
-            
             }
             // Next 4 bytes store length of the message
             var messageLength = BitConverter.ToInt32(data, next) * 2;
@@ -146,7 +145,6 @@ namespace ChatLibrary.Helper
         CancelCall,
         EndCall,
         Busy,
-        Heartbeat,
         NameExist,
         Null
     }

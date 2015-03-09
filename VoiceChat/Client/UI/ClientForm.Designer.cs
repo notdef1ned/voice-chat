@@ -39,6 +39,9 @@ namespace Client.UI
             this.tcChat = new UI.ChatTabControl();
             this.label1 = new System.Windows.Forms.Label();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.closeItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // sendMessageButton
@@ -116,6 +119,7 @@ namespace Client.UI
             this.tcChat.Size = new System.Drawing.Size(792, 607);
             this.tcChat.TabIndex = 8;
             this.tcChat.SelectedIndexChanged += new System.EventHandler(this.tcChat_SelectedIndexChanged);
+            this.tcChat.MouseClick += new System.Windows.Forms.MouseEventHandler(this.tcChat_MouseClick);
             // 
             // label1
             // 
@@ -127,6 +131,22 @@ namespace Client.UI
             this.label1.Size = new System.Drawing.Size(142, 25);
             this.label1.TabIndex = 9;
             this.label1.Text = "Users Online:";
+            // 
+            // contextMenu
+            // 
+            this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.closeItem});
+            this.contextMenu.Name = "contextMenu";
+            this.contextMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.contextMenu.Size = new System.Drawing.Size(386, 40);
+            // 
+            // closeItem
+            // 
+            this.closeItem.Name = "closeItem";
+            this.closeItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
+            this.closeItem.Size = new System.Drawing.Size(385, 36);
+            this.closeItem.Text = "Close Conversation";
+            this.closeItem.Click += new System.EventHandler(this.closeItem_Click);
             // 
             // ClientForm
             // 
@@ -144,6 +164,7 @@ namespace Client.UI
             this.Text = "Voice Chat Client";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientForm_FormClosing);
             this.Load += new System.EventHandler(this.ClientForm_Load);
+            this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -159,6 +180,8 @@ namespace Client.UI
         private ChatTabControl tcChat;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.ContextMenuStrip contextMenu;
+        private System.Windows.Forms.ToolStripMenuItem closeItem;
     }
 }
 

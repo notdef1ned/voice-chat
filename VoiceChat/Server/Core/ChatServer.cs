@@ -168,23 +168,9 @@ namespace Server.Core
         private void ParseRequest(ChatHelper.StateObject state, Socket incomingClient)
         {
             var data = new Data(state.Buffer);
-            
-            
-            switch (data.Command)
-            {
-                case Command.Heartbeat:
-                    if (!incomingClient.Connected)
-                        DisconnectClient(incomingClient);
-                break;
-
-                default:
-                    Socket clientSocket;
-                    if (userNames.TryGetValue(data.To, out clientSocket))
-                    {
-                        clientSocket.Send(data.ToByte());
-                    }
-                break;
-            }
+            Socket clientSocket;
+            if (userNames.TryGetValue(data.To, out clientSocket))
+                clientSocket.Send(data.ToByte());
         }
 
 
