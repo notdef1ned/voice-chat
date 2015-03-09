@@ -132,6 +132,8 @@ namespace Client.UI
             callForm = new CallForm(user,FormType.Outcoming);
             ChatClient.SendChatRequest(user);
             callForm.ShowDialog();
+            if (callForm.DialogResult == DialogResult.Cancel)
+                ChatClient.SendResponse(Command.EndCall);
         }
 
         private void ChatClient_CallRecieved(object sender, EventArgs e)

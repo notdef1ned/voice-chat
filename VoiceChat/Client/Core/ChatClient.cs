@@ -341,7 +341,7 @@ namespace Client.Core
         /// Send call response to caller
         /// </summary>
         /// <param name="response"></param>
-        private void SendResponse(Command response)
+        public void SendResponse(Command response)
         {
             var data = new Data {Command = response, To = udpSubscriber, From = UserName, ClientAddress = ClientAddress};
             server.Client.Send(data.ToByte());

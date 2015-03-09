@@ -1,12 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using Server.Core;
-using Log = ChatLibrary.Helper.Log;
 
 namespace Server.UI
 {
