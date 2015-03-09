@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
@@ -118,12 +119,19 @@ namespace Server.UI
             }
         }
         
-
+        /// <summary>
+        /// Obtain all working network interfaces
+        /// </summary>
         private void ObtainNetworkInterfaces()
         {
             var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (var i in interfaces)
-                cbInterfaces.Items.Add(i.Description);
+            foreach (var nic in interfaces.Where(i => (i.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+                || (i.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)))
+            {
+                var item = cbInterfaces.Items.Add(nic.Description);
+                if (nic.OperationalStatus == OperationalStatus.Up)
+                    cbInterfaces.SelectedIndex = item;
+            }
         }
 
         private static void WriteToEventLog(string message, EventLogEntryType type)
