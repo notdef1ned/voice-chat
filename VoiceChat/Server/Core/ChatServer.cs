@@ -47,7 +47,11 @@ namespace Server.Core
         /// </summary>
         public void StartListen()
         {
-            tcpServer = new TcpListener(IPAddress.Any,portNumber);
+            var ip = (networkInterface != null)
+                ? GetInterfaceIpAddress()
+                : IPAddress.Any;
+
+            tcpServer = new TcpListener(ip, portNumber);
             tcpServer.Start();
             
             isRunning = true;
@@ -66,6 +70,13 @@ namespace Server.Core
                 clientThread.Start(tcpClient.Client);
             }
         }
+
+        private IPAddress GetInterfaceIpAddress()
+        {
+            var ipAddresses = networkInterface.GetIPProperties().UnicastAddresses;
+            return (from ip in ipAddresses where ip.Address.AddressFamily == AddressFamily.InterNetwork select ip.Address).FirstOrDefault();
+        }
+
         /// <summary>
         /// Method to stop TCP communication, it kills the thread and closes clients' connection
         /// </summary>

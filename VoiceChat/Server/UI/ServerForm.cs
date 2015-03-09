@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -19,7 +20,6 @@ namespace Server.UI
             if (EventLog.SourceExists(Log.ApplicationName)) 
                 return;
             EventLog.CreateEventSource(Log.ApplicationName, Log.ApplicationName);
-            
         }
 
 
@@ -120,18 +120,23 @@ namespace Server.UI
         }
         
         /// <summary>
-        /// Obtain all working network interfaces
+        /// Obtain all network interfaces
         /// </summary>
         private void ObtainNetworkInterfaces()
         {
-            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach (var nic in interfaces.Where(i => (i.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+            const string anyInterface = "Any";
+            var list = new BindingList<object>();
+            var allInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (var nic in allInterfaces.Where(i => (i.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
                 || (i.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)))
             {
-                var item = cbInterfaces.Items.Add(nic.Description);
-                if (nic.OperationalStatus == OperationalStatus.Up)
-                    cbInterfaces.SelectedIndex = item;
+                list.Add(nic);
             }
+            list.Add(anyInterface);
+            cbInterfaces.DataSource = list;
+            cbInterfaces.DisplayMember = "Description";
+            cbInterfaces.ValueMember = null;
+            cbInterfaces.SelectedItem = anyInterface;
         }
 
         private static void WriteToEventLog(string message, EventLogEntryType type)
@@ -140,7 +145,6 @@ namespace Server.UI
         }
 
         
-
         private void ServerForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (server != null)

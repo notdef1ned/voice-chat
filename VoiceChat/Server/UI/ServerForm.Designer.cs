@@ -31,7 +31,7 @@
             this.connectionInfo = new System.Windows.Forms.GroupBox();
             this.lblName = new System.Windows.Forms.Label();
             this.tbServerName = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblInterface = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.cbInterfaces = new System.Windows.Forms.ComboBox();
             this.tbPort = new System.Windows.Forms.TextBox();
@@ -48,7 +48,7 @@
             // 
             this.connectionInfo.Controls.Add(this.lblName);
             this.connectionInfo.Controls.Add(this.tbServerName);
-            this.connectionInfo.Controls.Add(this.label2);
+            this.connectionInfo.Controls.Add(this.lblInterface);
             this.connectionInfo.Controls.Add(this.label1);
             this.connectionInfo.Controls.Add(this.cbInterfaces);
             this.connectionInfo.Controls.Add(this.tbPort);
@@ -74,17 +74,17 @@
             // 
             this.tbServerName.Location = new System.Drawing.Point(16, 134);
             this.tbServerName.Name = "tbServerName";
-            this.tbServerName.Size = new System.Drawing.Size(265, 31);
+            this.tbServerName.Size = new System.Drawing.Size(313, 31);
             this.tbServerName.TabIndex = 5;
             // 
-            // label2
+            // lblInterface
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(15, 275);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(185, 25);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Network Interface:";
+            this.lblInterface.AutoSize = true;
+            this.lblInterface.Location = new System.Drawing.Point(15, 275);
+            this.lblInterface.Name = "lblInterface";
+            this.lblInterface.Size = new System.Drawing.Size(189, 25);
+            this.lblInterface.TabIndex = 4;
+            this.lblInterface.Text = "Listen to interface:";
             // 
             // label1
             // 
@@ -100,7 +100,7 @@
             this.cbInterfaces.FormattingEnabled = true;
             this.cbInterfaces.Location = new System.Drawing.Point(16, 303);
             this.cbInterfaces.Name = "cbInterfaces";
-            this.cbInterfaces.Size = new System.Drawing.Size(265, 33);
+            this.cbInterfaces.Size = new System.Drawing.Size(313, 33);
             this.cbInterfaces.TabIndex = 2;
             // 
             // tbPort
@@ -181,7 +181,7 @@
         private System.Windows.Forms.ComboBox cbInterfaces;
         private System.Windows.Forms.TextBox tbPort;
         private System.Windows.Forms.CheckBox cbStartStop;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblInterface;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.GroupBox gbConnectedClients;
