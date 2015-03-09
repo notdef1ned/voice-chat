@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 
@@ -17,6 +18,10 @@ namespace ChatLibrary.Helper
         public const string Disconnected = "disconnected";
         #endregion
 
+        #region Errors
+        public const string PortError = "Port number should be between 0 and 65535";
+        #endregion
+
         public class StateObject
         {
             // Client  socket.
@@ -27,6 +32,11 @@ namespace ChatLibrary.Helper
             public byte[] Buffer = new byte[BufferSize];
             // Received data string.
             public StringBuilder Sb = new StringBuilder();
+        }
+
+        public static void WriteToEventLog(string message, EventLogEntryType type)
+        {
+            EventLog.WriteEntry(Log.ApplicationName, message, type);
         }
     }
 
@@ -139,6 +149,7 @@ namespace ChatLibrary.Helper
     public enum Command
     {
         Broadcast,
+        Disconnect,
         SendMessage,
         Call,
         AcceptCall,
@@ -148,4 +159,29 @@ namespace ChatLibrary.Helper
         NameExist,
         Null
     }
+    /// <summary>
+    /// Represents connected client
+    /// </summary>
+    public class Client
+    {
+        private readonly string userName;
+        private readonly Socket connection;
+        public bool IsConnected { get; set; }
+        public Socket Connection 
+        {
+            get { return connection; }
+        }
+        public string UserName 
+        {
+            get { return userName; }
+        }
+
+        public Client(string userName, Socket connection)
+        {
+            this.userName = userName;
+            this.connection = connection;
+        }
+    }
+
+
 }

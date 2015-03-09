@@ -5,10 +5,10 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using Client.Client;
 using ChatLibrary.Helper;
+using Client.Client;
 using NAudio.Wave;
-using Timer = System.Timers.Timer;
+
 namespace Client.Core
 {
     public class ChatClient
@@ -17,14 +17,16 @@ namespace Client.Core
 
         private readonly TcpClient server;
         private readonly Socket clientSocket;
-        
+        private readonly IPEndPoint localEndPoint;
+        private IPEndPoint remoteEndPoint;
+
         private WaveInEvent sourceStream;
         private WaveOut recievedStream;
         private BufferedWaveProvider waveProvider;
-        private readonly IPEndPoint localEndPoint;
-        private IPEndPoint remoteEndPoint;
+        
         private Thread udpReceiveThread;
         private Thread tcpRecieveThread;
+        
         private string udpSubscriber;
         private bool udpConnectionActive;
         #endregion
@@ -111,8 +113,9 @@ namespace Client.Core
             recievedStream = new WaveOut();
             recievedStream.Init(waveProvider);
 
-            tcpRecieveThread = new Thread(RecieveFromServer) {Priority = ThreadPriority.Highest};
+            tcpRecieveThread = new Thread(RecieveFromServer) {Priority = ThreadPriority.Normal};
             tcpRecieveThread.Start();
+            
             return true;
         }
 
@@ -351,7 +354,8 @@ namespace Client.Core
         public void CloseConnection()
         {
             IsConnected = false;
-            server.Client.Close();
+            var data = new Data {Command = Command.Disconnect};
+            server.Client.Send(data.ToByte());
         }
         /// <summary>
         /// Ends UDP connection

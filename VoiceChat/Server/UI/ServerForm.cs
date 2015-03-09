@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using Server.Core;
+using Log = ChatLibrary.Helper.Log;
 
 namespace Server.UI
 {
@@ -17,9 +18,6 @@ namespace Server.UI
         {
             InitializeComponent();
             ObtainNetworkInterfaces();
-            if (EventLog.SourceExists(Log.ApplicationName)) 
-                return;
-            EventLog.CreateEventSource(Log.ApplicationName, Log.ApplicationName);
         }
 
 
@@ -36,7 +34,7 @@ namespace Server.UI
                     server.ClientDisconnected += ServerOnClientDisconnected;
                     server.StartServer();
                     SetControls(false);
-                    WriteToEventLog(Log.Message(Log.Server, " on port " + port,Log.Start),EventLogEntryType.Information);
+                   
                 }
                 catch
                 {
@@ -51,7 +49,6 @@ namespace Server.UI
                     return;
                 server.StopServer();
                 SetControls(true);
-                WriteToEventLog(Log.Message(Log.Server," ",Log.Stop),EventLogEntryType.Information);
             }
         }
 
@@ -139,10 +136,7 @@ namespace Server.UI
             cbInterfaces.SelectedItem = anyInterface;
         }
 
-        private static void WriteToEventLog(string message, EventLogEntryType type)
-        {
-            EventLog.WriteEntry(Log.ApplicationName, message, type);
-        }
+        
 
         
         private void ServerForm_FormClosing(object sender, FormClosingEventArgs e)

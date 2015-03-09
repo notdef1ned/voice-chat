@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Server
+﻿namespace ChatLibrary.Helper
 {
     public static class Log
     {
         #region Server
-        public const string Server = "Server";
-        public const string Stop =  "stopped";
-        public const string Start = "started";
+        public const string ServerStarted = "Server started";
+        public const string ServerStopped = "Server stopped";
         #endregion
 
         #region Client
-        public const string Client = "Client";
-        public const string Connected = "connected";
-        public const string Disconnected = "disconnected";
+        public const string ClientConnected = "Client conencted";
+        public const string ClientDisconnected = "Client disconnected";
+        public const string TcpClientUnexpected = "TCP Connection closed unexpectedly";
+        public const string UdpClientUnexpected = "UDP Connection closed unexpectedly";
         #endregion
 
         #region Common
@@ -25,6 +19,7 @@ namespace Server
         public const string Application = "Application";
         #endregion
 
+        
 
         #region Methods
 

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
+using ChatLibrary.Helper;
 
 namespace Client
 {
@@ -31,7 +33,16 @@ namespace Client
 
         private void tbPort_TextChanged(object sender, EventArgs e)
         {
-            PortNumber = Int32.Parse(tbPort.Text);
+            try
+            {
+                var number = Int32.Parse(tbPort.Text);
+                if (Enumerable.Range(0,65536).Contains(number))
+                    PortNumber = number;    
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(ChatHelper.PortError);
+            }
         }
     }
 }
