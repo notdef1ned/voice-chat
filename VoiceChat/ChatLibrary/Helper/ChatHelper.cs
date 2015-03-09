@@ -23,6 +23,8 @@ namespace Chat.Helper
         public const string Accept = "accept";
         public const string Decline = "decline";
         public const string EndCall = "end";
+        public const string Busy = "busy";
+        public const string NameExist = "exist";
 
         #endregion
 

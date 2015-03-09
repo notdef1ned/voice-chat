@@ -8,6 +8,11 @@ namespace Client.UI
 {
     public partial class ClientForm : Form
     {
+        public const string Conversation =
+            "Double click on user to start conversation";
+        private const string NoUsersOnline = "There is no users online now";
+
+
         private CallForm callForm;
 
         private delegate void SetUserList(object sender, EventArgs e);
@@ -24,8 +29,9 @@ namespace Client.UI
             ChatClient.MessageReceived += chatClient_MessageReceived;
             ChatClient.CallRecieved += ChatClient_CallRecieved;
             ChatClient.CallRequestResponded += ChatClient_CallRequestResponded;
-            ChatClient.Init();
-            Text = string.Format("{0} connected to {1}", ChatClient.UserName, ChatClient.ServerAddress);
+
+            Text = ChatClient.Init() ? string.Format("{0} connected to {1} ({2})", ChatClient.UserName, ChatClient.ServerName,
+                ChatClient.ServerAddress) : "Disconnected";
             SetButtons();
         }
 
@@ -60,7 +66,7 @@ namespace Client.UI
             else
             {
                 var message = (string)sender;
-                var args = e as MessageEventArgs;
+                var args = e as ServerEventArgs;
                 if (args == null)
                     return;
 
@@ -88,7 +94,7 @@ namespace Client.UI
         private void chatClient_UserListReceived(object sender, EventArgs e)
         {
             var list = (string) sender;
-            var args = e as MessageEventArgs;
+            var args = e as ServerEventArgs;
             if (args == null)
                 return;
             var userInfo = args.Message.Split('|');
@@ -130,7 +136,7 @@ namespace Client.UI
         private void ChatClient_CallRecieved(object sender, EventArgs e)
         {
             var address = (string) sender;
-            var args = e as MessageEventArgs;
+            var args = e as ServerEventArgs;
             if (args == null)
                 return;
 
@@ -138,12 +144,14 @@ namespace Client.UI
             var dialogResult = callForm.ShowDialog() == DialogResult.OK 
                 ? ChatHelper.Accept : ChatHelper.Decline;
             ChatClient.AnswerIncomingCall(args.Message, address, dialogResult);
+            
             switch (dialogResult)
             {
                 case ChatHelper.Accept:
                     StartConversation();
                     break;
                 case ChatHelper.Decline:
+                case ChatHelper.Busy:
                     callForm.Close();
                     break;
             }
@@ -187,12 +195,14 @@ namespace Client.UI
             var selectedUser = lbUsers.SelectedItem.ToString();
             var message = string.Format("{0}: {1}", ChatClient.UserName, messageTextbox.Text);
             ChatClient.SendMessage(message, selectedUser);
+            
             var page = FindTabPage(selectedUser) ?? AddTabPage(selectedUser);
             tcChat.SelectedTab = page;
             var time = DateTime.Now.ToString("HH:mm:ss");
+        
             page.DialogBox.AppendText(string.Format("[{0}] {1}", time, message));
             page.DialogBox.AppendText(Environment.NewLine);
-            messageTextbox.Text = String.Empty;
+            messageTextbox.Clear();
         }
 
         private void lbUsers_SelectedValueChanged(object sender, EventArgs e)
@@ -218,17 +228,45 @@ namespace Client.UI
 
         private void SetButtons()
         {
-            var isSelected = lbUsers.SelectedItem != null;
-            sendMessageButton.Enabled = messageTextbox.Text != String.Empty && isSelected;
+            var isSelected = tcChat.SelectedTab != null && tcChat.SelectedTab != tcChat.GlobalPage;
+            sendMessageButton.Enabled = !String.IsNullOrWhiteSpace(messageTextbox.Text) && isSelected;
             callButton.Enabled = isSelected;
         }
 
         private void messageTextbox_KeyDown(object sender, KeyEventArgs e)
-      {
-            if (e.KeyCode == Keys.Enter && sendMessageButton.Enabled)
-                SendMessage();
+        {
+            if (e.KeyCode != Keys.Enter || !sendMessageButton.Enabled) 
+                return;
+            SendMessage();
         }
 
+        private void lbUsers_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            var index = lbUsers.IndexFromPoint(e.Location);
+            if (index == ListBox.NoMatches) 
+                return;
+            var name = lbUsers.SelectedItem.ToString();
+            tcChat.SelectedTab = FindTabPage(name) ?? AddTabPage(name);
+        }
 
+        private void tcChat_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetButtons();
+        }
+
+        private void lbUsers_MouseMove(object sender, MouseEventArgs e)
+        {
+            var str = toolTip.GetToolTip(lbUsers);
+            if (lbUsers.Items.Count > 0)
+            {
+                if (str != Conversation)
+                    toolTip.SetToolTip(lbUsers, Conversation);
+            }
+            else
+            {
+                if (str != NoUsersOnline)
+                    toolTip.SetToolTip(lbUsers, NoUsersOnline);
+            }
+        }
     }
 }

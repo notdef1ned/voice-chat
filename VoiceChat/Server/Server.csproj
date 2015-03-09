@@ -50,9 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Server\ChatServer.cs" />
-    <Compile Include="Server\CustomEventArgs.cs" />
-    <Compile Include="Server\Log.cs" />
+    <Compile Include="Core\ChatServer.cs" />
+    <Compile Include="Core\CustomEventArgs.cs" />
+    <Compile Include="Core\Log.cs" />
     <Compile Include="UI\ServerForm.cs">
       <SubType>Form</SubType>
     </Compile>

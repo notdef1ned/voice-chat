@@ -24,8 +24,10 @@ namespace Client.Client
         private readonly IPEndPoint localEndPoint;
         private IPEndPoint remoteEndPoint;
         private Thread udpReceiveThread;
+        private Thread tcpRecieveThread;
         //private Thread heartBeatThread;
         private string udpSubscriber;
+        private bool udpConnectionActive;
         #endregion
 
         #region Events
@@ -39,6 +41,7 @@ namespace Client.Client
 
         public string ClientAddress { get; set; }
         public string ServerAddress { get; set; }
+        public string ServerName { get; set; }
         public string UserName { get; set; }
         public bool IsConnected { get; set; }
 
@@ -81,7 +84,8 @@ namespace Client.Client
 
         private void BindSocket()
         {
-            clientSocket.Bind(localEndPoint);
+            if (!clientSocket.IsBound)
+                clientSocket.Bind(localEndPoint);
         }
 
         private IPEndPoint GetHostEndPoint()
@@ -97,21 +101,30 @@ namespace Client.Client
         }
 
 
-        public void Init()
+        public bool Init()
         {
-            var state = new ChatHelper.StateObject
-            {
-                WorkSocket = server.Client
-            };
-
             //Receive list of users online 
-            ReceiveUsersList();
-
+            if (!ReceiveUsersList())
+            {
+                return false;
+            }
             //heartBeatThread = new Thread(HeartBeat);
             //heartBeatThread.Start();
             waveProvider = new BufferedWaveProvider(new WaveFormat(8000, 16, WaveIn.GetCapabilities(0).Channels));
             recievedStream = new WaveOut();
             recievedStream.Init(waveProvider);
+
+            tcpRecieveThread = new Thread(RecieveFromServer) {Priority = ThreadPriority.Highest};
+            tcpRecieveThread.Start();
+            return true;
+        }
+
+        private void RecieveFromServer()
+        {
+            var state = new ChatHelper.StateObject
+            {
+                WorkSocket = server.Client
+            };
 
             server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0,
                 OnReceive, state);
@@ -147,14 +160,23 @@ namespace Client.Client
             
         }
 
-        private void ReceiveUsersList()
+        private bool ReceiveUsersList()
         {
             var bytes = new byte[1024];
             var bytesRead = server.Client.Receive(bytes);
             var content = Encoding.Unicode.GetString(bytes, 0, bytesRead);
+         
             var info = content.Split('|');
+            if (info[1] == ChatHelper.NameExist)
+            {
+                MessageBox.Show(string.Format("Name \"{0}\" already exist on server",info[0]));
+                return false;
+            }
             var list = info[2];
+            ServerName = info[5];
+            
             OnUserListReceived(list,info[3],info[4]);
+            return true;
         }
 
         public void OnReceive(IAsyncResult ar)
@@ -180,7 +202,7 @@ namespace Client.Client
                 
                 server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0, OnReceive, state);
             }
-            catch (SocketException)
+            catch (SocketException e)
             {
                 server.Client.Disconnect(true);
             }
@@ -201,12 +223,13 @@ namespace Client.Client
                 recievedStream.Play();
 
                 var ep = (EndPoint)localEndPoint;
-                handler.BeginReceiveFrom(state.Buffer, 0, ChatHelper.StateObject.BufferSize, SocketFlags.None, ref ep, OnUdpRecieve, state);
+                if (udpConnectionActive)
+                    handler.BeginReceiveFrom(state.Buffer, 0, ChatHelper.StateObject.BufferSize, SocketFlags.None, ref ep, OnUdpRecieve, state);
             }
             catch (Exception)
             {
                 // remote user disconnected
-                clientSocket.Close();
+                //clientSocket.Close();
             }
         }
 
@@ -232,7 +255,9 @@ namespace Client.Client
                     }
                 break;
                 case ChatHelper.Request:
-                    OnCallRecieved(info[2],info[3]);
+                    if (!udpConnectionActive)
+                        OnCallRecieved(info[2],info[3]);
+                    SendResponse(ChatHelper.Busy);
                 break;
                 case ChatHelper.Response:
                     ParseResponse(info[2],info[3],info[4]);
@@ -270,9 +295,12 @@ namespace Client.Client
                 DeviceNumber = 0,
                 WaveFormat = new WaveFormat(8000, 16, WaveIn.GetCapabilities(0).Channels)
             };
-            
+
+            udpConnectionActive = true;
+
             sourceStream.DataAvailable += sourceStream_DataAvailable;
             sourceStream.StartRecording();
+
             udpReceiveThread = new Thread(ReceiveUdpData);
             udpReceiveThread.Start();
         }
@@ -289,6 +317,11 @@ namespace Client.Client
         {
             try
             {
+                if (!udpConnectionActive)
+                {
+                    sourceStream.StopRecording();
+                    return;
+                }
                 var ep = remoteEndPoint as EndPoint;
                 clientSocket.SendTo(buf, 0, bytesRecorded, SocketFlags.None, ep);
             }
@@ -309,7 +342,7 @@ namespace Client.Client
             }
             catch (Exception)
             {
-                clientSocket.Close();
+                //clientSocket.Close();
             }
             
         }
@@ -335,27 +368,33 @@ namespace Client.Client
             var bytes = Encoding.Unicode.GetBytes(str);
             server.Client.Send(bytes);
         }
-
-        private void SendChatEndRequest()
+        
+        private void SendResponse(string response)
         {
             var str = string.Format("{0}|{1}|{2}|{3}|{4}", ChatHelper.Response, udpSubscriber, UserName,
-                ChatHelper.EndCall, ClientAddress);
+                response, ClientAddress);
             var bytes = Encoding.Unicode.GetBytes(str);
             server.Client.Send(bytes);
         }
 
 
+        /// <summary>
+        /// Closes server connection
+        /// </summary>
         public void CloseConnection()
         {
             IsConnected = false;
             server.Client.Close();
         }
-
+        /// <summary>
+        /// Ends UDP connection
+        /// </summary>
+        /// <param name="requestNeeded"></param>
         public void EndChat(bool requestNeeded)
         {
             if (requestNeeded)
-                SendChatEndRequest();
-            clientSocket.Close();
+                SendResponse(ChatHelper.EndCall);
+            udpConnectionActive = false;
         }
 
 
@@ -373,24 +412,24 @@ namespace Client.Client
 
         #endregion
 
-        #region Event Invocators
+        #region Event Invokers
 
         protected virtual void OnUserListReceived(string str, string userStr, string state)
         {
             var handler = UserListReceived;
-            if (handler != null) handler(str, new MessageEventArgs(string.Format("{0}|{1}", userStr, state)));
+            if (handler != null) handler(str, new ServerEventArgs(string.Format("{0}|{1}", userStr, state)));
         }
 
         protected virtual void OnMessageReceived(string str, string sender)
         {
             var handler = MessageReceived;
-            if (handler != null) handler(str, new MessageEventArgs(sender));
+            if (handler != null) handler(str, new ServerEventArgs(sender));
         }
 
         protected virtual void OnCallRecieved(string caller, string address)
         {
             var handler = CallRecieved;
-            if (handler != null) handler(address, new MessageEventArgs(caller));
+            if (handler != null) handler(address, new ServerEventArgs(caller));
         }
 
         protected virtual void OnCallResponseReceived(string response)

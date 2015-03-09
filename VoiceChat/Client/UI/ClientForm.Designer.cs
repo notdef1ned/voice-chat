@@ -1,4 +1,6 @@
-﻿namespace Client.UI
+﻿using System.Net.WebSockets;
+
+namespace Client.UI
 {
     partial class ClientForm
     {
@@ -28,13 +30,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.sendMessageButton = new System.Windows.Forms.Button();
             this.messageTextbox = new System.Windows.Forms.TextBox();
             this.callButton = new System.Windows.Forms.Button();
             this.tbDialog = new System.Windows.Forms.TextBox();
             this.lbUsers = new System.Windows.Forms.ListBox();
-            this.tcChat = new ChatTabControl();
+            this.tcChat = new UI.ChatTabControl();
             this.label1 = new System.Windows.Forms.Label();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // sendMessageButton
@@ -50,6 +54,7 @@
             // 
             // messageTextbox
             // 
+            this.messageTextbox.AcceptsReturn = true;
             this.messageTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.messageTextbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -93,9 +98,12 @@
             this.lbUsers.ItemHeight = 25;
             this.lbUsers.Location = new System.Drawing.Point(18, 37);
             this.lbUsers.Name = "lbUsers";
+            this.lbUsers.ScrollAlwaysVisible = true;
             this.lbUsers.Size = new System.Drawing.Size(195, 577);
             this.lbUsers.TabIndex = 7;
             this.lbUsers.SelectedValueChanged += new System.EventHandler(this.lbUsers_SelectedValueChanged);
+            this.lbUsers.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lbUsers_MouseDoubleClick);
+            this.lbUsers.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lbUsers_MouseMove);
             // 
             // tcChat
             // 
@@ -107,6 +115,7 @@
             this.tcChat.SelectedIndex = 0;
             this.tcChat.Size = new System.Drawing.Size(792, 607);
             this.tcChat.TabIndex = 8;
+            this.tcChat.SelectedIndexChanged += new System.EventHandler(this.tcChat_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -149,6 +158,7 @@
         private System.Windows.Forms.ListBox lbUsers;
         private ChatTabControl tcChat;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }
 

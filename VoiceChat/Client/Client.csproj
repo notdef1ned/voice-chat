@@ -50,14 +50,14 @@
     <Compile Include="UI\ChatTabPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Client\ChatClient.cs" />
+    <Compile Include="Core\ChatClient.cs" />
     <Compile Include="UI\ClientForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\ClientForm.Designer.cs">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Client\MessageEventArgs.cs" />
+    <Compile Include="Core\MessageEventArgs.cs" />
     <Compile Include="UI\ConnectForm.cs">
       <SubType>Form</SubType>
     </Compile>

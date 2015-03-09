@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using Chat.Helper;
@@ -23,8 +24,6 @@ namespace Server.Server
         public event EventHandler ClientConnected;
         public event EventHandler ClientDisconnected;
         #endregion
-
-       
 
         #region Constructor
 
@@ -82,7 +81,6 @@ namespace Server.Server
 
         #endregion
 
-
         #region Add/Remove Clients
         public void NewClient(object obj)
         {
@@ -93,18 +91,22 @@ namespace Server.Server
         public void ClientAdded(object sender, EventArgs e)
         {
             var socket = ((CustomEventArgs) e).ClientSocket;
-           
-            // update clients list
             var bytes = new byte[1024];
             var bytesRead = socket.Receive(bytes);
-            var str = Encoding.Unicode.GetString(bytes, 0, bytesRead);
+           
+            var newUserName = Encoding.Unicode.GetString(bytes, 0, bytesRead);
 
-            OnClientConnected(socket, str);
-            
-            userNames.Add(str, socket);
+            if (userNames.ContainsKey(newUserName))
+            {
+                SendNameAlreadyExist(socket, newUserName);
+                return;
+            }
+
+            userNames.Add(newUserName, socket);
+            OnClientConnected(socket, newUserName);
 
             foreach (var user in userNames)
-                SendUsersList(user.Value, user.Key, str, ChatHelper.Connected);
+                SendUsersList(user.Value, user.Key, newUserName, ChatHelper.Connected);
            
             var state = new ChatHelper.StateObject
             {
@@ -113,20 +115,24 @@ namespace Server.Server
             
             socket.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0,
             OnReceive, state);
-            
         }
 
-        public void SendUsersList(Socket clientSocket, string userName, string changedUser, string state)
+
+        public void SendNameAlreadyExist(Socket clientSocket, string name)
         {
-            var userList = string.Format("{0}|{1}|{2}|{3}|{4}", ChatHelper.Message, ChatHelper.Server,
-                string.Join(",", userNames.Keys.Where(u => u != userName).ToArray()),changedUser,state);
-            var bytes = Encoding.Unicode.GetBytes(userList);
+            var response = string.Format("{0}|{1}", name, ChatHelper.NameExist);
+            var bytes = Encoding.Unicode.GetBytes(response);
             clientSocket.Send(bytes);
         }
 
-
-
-
+        public void SendUsersList(Socket clientSocket, string userName, string changedUser, string serverState)
+        {
+            var userList = string.Format("{0}|{1}|{2}|{3}|{4}|{5}", ChatHelper.Message, ChatHelper.Server,
+                string.Join(",", userNames.Keys.Where(u => u != userName).ToArray()), changedUser, serverState,
+                serverName);
+            var bytes = Encoding.Unicode.GetBytes(userList);
+            clientSocket.Send(bytes);
+        }
 
         public void OnReceive(IAsyncResult ar)
         {
@@ -168,6 +174,7 @@ namespace Server.Server
                     if (!incomingClient.Connected)
                         DisconnectClient(incomingClient);
                 break;
+
                 default:
                     Socket clientSocket;
                     if (userNames.TryGetValue(str[1], out clientSocket))
@@ -194,6 +201,8 @@ namespace Server.Server
 
        #endregion
 
+        #region Event Invokers
+
         protected virtual void OnClientConnected(Socket clientSocket, string name)
         {
             var handler = ClientConnected;
@@ -205,5 +214,7 @@ namespace Server.Server
             var handler = ClientDisconnected;
             if (handler != null) handler(name, new CustomEventArgs(clientSocket));
         }
+
+        #endregion
     }
 }
