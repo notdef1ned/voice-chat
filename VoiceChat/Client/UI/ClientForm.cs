@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using Chat.Helper;
+using ChatLibrary.Helper;
 using Client.Client;
+using Client.Core;
 
 namespace Client.UI
 {
@@ -37,10 +38,10 @@ namespace Client.UI
 
         private void ChatClient_CallRequestResponded(object sender, EventArgs e)
         {
-            var message = (string) sender;
-            switch (message)
+            var command = (Command) sender;
+            switch (command)
             {
-                case ChatHelper.Accept:
+                case Command.AcceptCall:
                     StartConversation();
                 break;
                 default:
@@ -65,15 +66,15 @@ namespace Client.UI
             }
             else
             {
-                var message = (string)sender;
+                var user = (string)sender;
                 var args = e as ServerEventArgs;
                 if (args == null)
                     return;
 
-                var page = FindTabPage(args.Message) ?? AddTabPage(args.Message);
+                var page = FindTabPage(user) ?? AddTabPage(user);
                 var time = DateTime.Now.ToString("HH:mm:ss");
                
-                page.DialogBox.AppendText(string.Format("[{0}] {1}", time, message));
+                page.DialogBox.AppendText(string.Format("[{0}] {1}", time, args.Message));
                 page.DialogBox.AppendText(Environment.NewLine);
             }
             
@@ -93,32 +94,32 @@ namespace Client.UI
 
         private void chatClient_UserListReceived(object sender, EventArgs e)
         {
-            var list = (string) sender;
+            var userList = (string) sender;
             var args = e as ServerEventArgs;
             if (args == null)
                 return;
-            var userInfo = args.Message.Split('|');
             
             if (lbUsers.InvokeRequired)
             {
                 SetUserList ul = chatClient_UserListReceived;
-                Invoke(ul, list, e);
+                Invoke(ul, sender, e);
             }
             else
             {
                 lbUsers.Items.Clear();
-                var connStr = string.Format("{0} {1}", userInfo[0], userInfo[1]);
+                var connStr = string.Format("{0} {1}", args.User, args.Info);
                 tcChat.GlobalPage.DialogBox.AppendText(connStr);
                 tcChat.GlobalPage.DialogBox.AppendText(Environment.NewLine);
-                var userPage = FindTabPage(userInfo[0]);
+                
+                var userPage = FindTabPage(args.User);
                 if (userPage != null)
                 {
                     userPage.DialogBox.AppendText(connStr);
                     userPage.DialogBox.AppendText(Environment.NewLine);
                 }
-                if (list == string.Empty)
+                if (userList == string.Empty)
                     return;
-                var users = list.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                var users = userList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var user in users)
                     lbUsers.Items.Add(user);
              }
@@ -142,16 +143,15 @@ namespace Client.UI
 
             callForm = new CallForm(args.Message, FormType.Incoming);
             var dialogResult = callForm.ShowDialog() == DialogResult.OK 
-                ? ChatHelper.Accept : ChatHelper.Decline;
+                ? Command.AcceptCall : Command.CancelCall;
             ChatClient.AnswerIncomingCall(args.Message, address, dialogResult);
             
             switch (dialogResult)
             {
-                case ChatHelper.Accept:
+                case Command.AcceptCall:
                     StartConversation();
                     break;
-                case ChatHelper.Decline:
-                case ChatHelper.Busy:
+                case Command.CancelCall:
                     callForm.Close();
                     break;
             }

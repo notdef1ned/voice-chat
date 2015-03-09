@@ -5,11 +5,11 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using Chat.Helper;
+using Client.Client;
+using ChatLibrary.Helper;
 using NAudio.Wave;
 using Timer = System.Timers.Timer;
-
-namespace Client.Client
+namespace Client.Core
 {
     public class ChatClient
     {
@@ -76,11 +76,9 @@ namespace Client.Client
             var bytes = Encoding.Unicode.GetBytes(userName);
             server.Client.Send(bytes);
         }
-#endregion
-
+        #endregion
 
         #region Methods
-
 
         private void BindSocket()
         {
@@ -135,8 +133,7 @@ namespace Client.Client
         /// </summary>
         private void HeartBeat()
         {
-            var heartbeat = string.Format("{0}|{1}", ChatHelper.Heartbeat, UserName);
-            var bytes = Encoding.Unicode.GetBytes(heartbeat);
+            var data = new Data {Command = Command.Heartbeat, From = UserName};
             Timer timer = null;
             while (IsConnected)
             {
@@ -147,7 +144,7 @@ namespace Client.Client
                     {
                         try
                         {
-                            server.Client.Send(bytes);
+                            server.Client.Send(data.ToByte());
                         }
                         catch
                         {
@@ -163,19 +160,21 @@ namespace Client.Client
         private bool ReceiveUsersList()
         {
             var bytes = new byte[1024];
-            var bytesRead = server.Client.Receive(bytes);
-            var content = Encoding.Unicode.GetString(bytes, 0, bytesRead);
-         
-            var info = content.Split('|');
-            if (info[1] == ChatHelper.NameExist)
+            server.Client.Receive(bytes);
+            var data = new Data(bytes);
+
+            var serverMessage = data.Message.Split(new[] { '|' }, StringSplitOptions.None);
+
+            if (data.Command == Command.NameExist)
             {
-                MessageBox.Show(string.Format("Name \"{0}\" already exist on server",info[0]));
+                MessageBox.Show(string.Format("Name \"{0}\" already exist on server", serverMessage[1]));
                 return false;
             }
-            var list = info[2];
-            ServerName = info[5];
+
+            ServerName = serverMessage[3];
             
-            OnUserListReceived(list,info[3],info[4]);
+            OnUserListReceived(serverMessage);
+
             return true;
         }
 
@@ -192,17 +191,11 @@ namespace Client.Client
                 var bytesRead = handler.EndReceive(ar);
                 if (bytesRead <= 0)
                     return;
-
-                state.Sb.Remove(0, state.Sb.Length);
-                state.Sb.Append(Encoding.Unicode.GetString(state.Buffer, 0, bytesRead));
-
-                var content = state.Sb.ToString();  
-
-                ParseMessage(content);
+                ParseMessage(new Data(state.Buffer));
                 
                 server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0, OnReceive, state);
             }
-            catch (SocketException e)
+            catch (SocketException)
             {
                 server.Client.Disconnect(true);
             }
@@ -237,44 +230,42 @@ namespace Client.Client
         /// Parse received message
         /// </summary>
         /// <param name="message"></param>
-        public void ParseMessage(string message)
+        public void ParseMessage(Data message)
         {
-            var info = message.Split('|');
-            var interactionType = info[0];
-            switch (interactionType)
+            switch (message.Command)
             {
-                case ChatHelper.Message:
-                    switch (info[1])
-                    {
-                        case ChatHelper.Server:
-                            OnUserListReceived(info[2],info[3],info[4]);
-                        break;
-                        default:
-                            OnMessageReceived(info[3], info[2]);  
-                        break;
-                    }
+                case Command.SendMessage:
+                    OnMessageReceived(message.Message, message.From);
                 break;
-                case ChatHelper.Request:
+
+                case Command.Broadcast:
+                    OnUserListReceived(message.Message.Split('|'));
+                break;
+
+                case Command.Call:
                     if (!udpConnectionActive)
-                        OnCallRecieved(info[2],info[3]);
-                    SendResponse(ChatHelper.Busy);
+                        OnCallRecieved(message.From, message.ClientAddress);
+                    SendResponse(Command.Busy);
                 break;
-                case ChatHelper.Response:
-                    ParseResponse(info[2],info[3],info[4]);
-                    OnCallResponseReceived(info[3]);
+
+                case Command.AcceptCall:
+                case Command.CancelCall:
+                case Command.EndCall:
+                    ParseResponse(message.From,message.Command,message.ClientAddress);
+                    OnCallResponseReceived(message.Command);
                 break;
             }
         }
 
-        private void ParseResponse(string user,string response,string address)
+        private void ParseResponse(string user,Command response,string address)
         {
             switch (response)
             {
-                case ChatHelper.Accept:
+                case Command.AcceptCall:
                     udpSubscriber = user;
                     StartVoiceChat(address);
                 break;
-                case ChatHelper.EndCall:
+                case Command.EndCall:
                     EndChat(false);
                 break;
             }
@@ -354,9 +345,8 @@ namespace Client.Client
         /// <param name="recipient"></param>
         public void SendMessage(string message,string recipient)
         {
-            var str = string.Format("{0}|{1}|{2}|{3}",ChatHelper.Message, recipient, UserName, message);
-            var bytes = Encoding.Unicode.GetBytes(str);
-            server.Client.Send(bytes);
+            var data = new Data {Command = Command.SendMessage, To = recipient, From = UserName, Message = message};
+            server.Client.Send(data.ToByte());
         }
         /// <summary>
         /// Call to user
@@ -364,17 +354,17 @@ namespace Client.Client
         /// <param name="recipient"></param>
         public void SendChatRequest(string recipient)
         {
-            var str = string.Format("{0}|{1}|{2}|{3}",ChatHelper.Request, recipient, UserName,ClientAddress);
-            var bytes = Encoding.Unicode.GetBytes(str);
-            server.Client.Send(bytes);
+            var data = new Data {Command = Command.Call, To = recipient, From = UserName, ClientAddress = ClientAddress};
+            server.Client.Send(data.ToByte());
         }
-        
-        private void SendResponse(string response)
+        /// <summary>
+        /// Send call response to caller
+        /// </summary>
+        /// <param name="response"></param>
+        private void SendResponse(Command response)
         {
-            var str = string.Format("{0}|{1}|{2}|{3}|{4}", ChatHelper.Response, udpSubscriber, UserName,
-                response, ClientAddress);
-            var bytes = Encoding.Unicode.GetBytes(str);
-            server.Client.Send(bytes);
+            var data = new Data {Command = response, To = udpSubscriber, From = UserName, ClientAddress = ClientAddress};
+            server.Client.Send(data.ToByte());
         }
 
 
@@ -393,37 +383,37 @@ namespace Client.Client
         public void EndChat(bool requestNeeded)
         {
             if (requestNeeded)
-                SendResponse(ChatHelper.EndCall);
+                SendResponse(Command.EndCall);
             udpConnectionActive = false;
         }
 
 
-        public void AnswerIncomingCall(string caller, string address, string answer)
+        public void AnswerIncomingCall(string caller, string address, Command answer)
         {
-            var str = string.Format("{0}|{1}|{2}|{3}|{4}", ChatHelper.Response, caller, UserName, answer, ClientAddress);
-            var bytes = Encoding.Unicode.GetBytes(str);
-            if (answer == ChatHelper.Accept)
+            var data = new Data {Command = answer, From = UserName, To = caller, ClientAddress = ClientAddress};
+            if (answer == Command.AcceptCall)
             {
                 udpSubscriber = caller;
                 StartVoiceChat(address);
             }
-            server.Client.Send(bytes);
+            server.Client.Send(data.ToByte());
         }
 
         #endregion
 
         #region Event Invokers
 
-        protected virtual void OnUserListReceived(string str, string userStr, string state)
+        protected virtual void OnUserListReceived(string[] serverMessage)
         {
             var handler = UserListReceived;
-            if (handler != null) handler(str, new ServerEventArgs(string.Format("{0}|{1}", userStr, state)));
+            if (handler != null)
+                handler(serverMessage[0], new ServerEventArgs(serverMessage[1], serverMessage[2], serverMessage[3]));
         }
 
-        protected virtual void OnMessageReceived(string str, string sender)
+        protected virtual void OnMessageReceived(string message, string sender)
         {
             var handler = MessageReceived;
-            if (handler != null) handler(str, new ServerEventArgs(sender));
+            if (handler != null) handler(sender, new ServerEventArgs(message));
         }
 
         protected virtual void OnCallRecieved(string caller, string address)
@@ -432,7 +422,7 @@ namespace Client.Client
             if (handler != null) handler(address, new ServerEventArgs(caller));
         }
 
-        protected virtual void OnCallResponseReceived(string response)
+        protected virtual void OnCallResponseReceived(Command response)
         {
             var handler = CallRequestResponded;
             if (handler != null) handler(response, EventArgs.Empty);

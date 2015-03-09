@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Client.Client;
+using Client.Core;
 using Client.UI;
 
 namespace Client

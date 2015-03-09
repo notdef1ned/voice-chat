@@ -1,4 +1,4 @@
-﻿namespace Server
+﻿namespace Server.UI
 {
     partial class ServerForm
     {

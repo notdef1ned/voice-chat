@@ -4,12 +4,11 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
-using Chat.Helper;
+using ChatLibrary.Helper;
 
-namespace Server.Server
+namespace Server.Core
 {
     public class ChatServer
     {
@@ -19,7 +18,7 @@ namespace Server.Server
         private readonly int portNumber;
         private bool isRunning;
         private NetworkInterface networkInterface;
-        private string serverName;
+        private readonly string serverName;
         private readonly Dictionary<string, Socket> userNames = new Dictionary<string, Socket>(); 
         public event EventHandler ClientConnected;
         public event EventHandler ClientDisconnected;
@@ -120,18 +119,23 @@ namespace Server.Server
 
         public void SendNameAlreadyExist(Socket clientSocket, string name)
         {
-            var response = string.Format("{0}|{1}", name, ChatHelper.NameExist);
-            var bytes = Encoding.Unicode.GetBytes(response);
-            clientSocket.Send(bytes);
+            var data = new Data {Command = Command.NameExist, To = name};
+            clientSocket.Send(data.ToByte());
         }
 
-        public void SendUsersList(Socket clientSocket, string userName, string changedUser, string serverState)
+        public void SendUsersList(Socket clientSocket, string userName, string changedUser, string state)
         {
-            var userList = string.Format("{0}|{1}|{2}|{3}|{4}|{5}", ChatHelper.Message, ChatHelper.Server,
-                string.Join(",", userNames.Keys.Where(u => u != userName).ToArray()), changedUser, serverState,
-                serverName);
-            var bytes = Encoding.Unicode.GetBytes(userList);
-            clientSocket.Send(bytes);
+            var data = new Data
+            {
+                Command = Command.Broadcast,
+                To = userName,
+                Message = string.Format("{0}|{1}|{2}|{3}",
+                    string.Join(",", userNames.Keys.Where(u => u != userName).ToArray()), changedUser, state,
+                    serverName)
+            };
+
+                        
+            clientSocket.Send(data.ToByte());
         }
 
         public void OnReceive(IAsyncResult ar)
@@ -148,7 +152,7 @@ namespace Server.Server
                 if (bytesRead <= 0)
                     return;
 
-                ParseRequest(state,bytesRead,handler);
+                ParseRequest(state,handler);
                 
                 // Restore receiving
                 handler.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0,
@@ -161,26 +165,23 @@ namespace Server.Server
             }
         }
 
-        private void ParseRequest(ChatHelper.StateObject state,int bytesRead, Socket incomingClient)
+        private void ParseRequest(ChatHelper.StateObject state, Socket incomingClient)
         {
-            var recievedString = Encoding.Unicode.GetString(state.Buffer, 0, bytesRead);
-            var str = recievedString.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+            var data = new Data(state.Buffer);
             
-            var messageType = str[0];
             
-            switch (messageType)
+            switch (data.Command)
             {
-                case ChatHelper.Heartbeat:
+                case Command.Heartbeat:
                     if (!incomingClient.Connected)
                         DisconnectClient(incomingClient);
                 break;
 
                 default:
                     Socket clientSocket;
-                    if (userNames.TryGetValue(str[1], out clientSocket))
+                    if (userNames.TryGetValue(data.To, out clientSocket))
                     {
-                        var bytes = Encoding.Unicode.GetBytes(recievedString);
-                        clientSocket.Send(bytes);
+                        clientSocket.Send(data.ToByte());
                     }
                 break;
             }

@@ -59,7 +59,6 @@
     <Compile Include="UI\ServerForm.Designer.cs">
       <DependentUpon>ServerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Codec\NSpeex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="UI\ServerForm.resx">

@@ -8,9 +8,20 @@ namespace Client.Client
 
         public string ServerName { get; set; }
 
-        public ServerEventArgs(string sender)
+        public string Info { get; set; }
+
+        public string User { get; set; }
+
+        public ServerEventArgs(string changedUser, string info, string serverName)
         {
-            Message = sender;
+            User = changedUser;
+            ServerName = serverName;
+            Info = info;
+        }
+
+        public ServerEventArgs(string msg)
+        {
+            Message = msg;
         }
 
     }

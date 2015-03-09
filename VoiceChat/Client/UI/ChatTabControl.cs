@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using ChatLibrary.Helper;
 
 namespace Client.UI
 {
@@ -8,7 +9,7 @@ namespace Client.UI
 
         public ChatTabControl()
         {
-            GlobalPage = new ChatTabPage {Text = Chat.Helper.ChatHelper.Global};
+            GlobalPage = new ChatTabPage {Text = ChatHelper.Global};
             TabPages.Add(GlobalPage);
         }
     }

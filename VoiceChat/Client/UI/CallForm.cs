@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using ChatLibrary.Helper;
 using Client.UI.Controls;
 
 namespace Client.UI
@@ -41,15 +42,15 @@ namespace Client.UI
                 {
                     case FormType.Conversation:
                         Control = new Conversation();
-                        Text = string.Format("{0}: {1}", Chat.Helper.ChatHelper.Conversation, caller);
+                        Text = string.Format("{0}: {1}", ChatHelper.Conversation, caller);
                         break;
                     case FormType.Incoming:
                         Control = new IncomingCall();
-                        Text = string.Format("{0}: {1}", Chat.Helper.ChatHelper.IncomingCall, caller);
+                        Text = string.Format("{0}: {1}", ChatHelper.IncomingCall, caller);
                         break;
                     case FormType.Outcoming:
                         Control = new OutcomingCall();
-                        Text = string.Format("{0}: {1}", Chat.Helper.ChatHelper.OutcomingCall, caller);
+                        Text = string.Format("{0}: {1}", ChatHelper.OutcomingCall, caller);
                         break;
                 }
                 if (Control == null) 

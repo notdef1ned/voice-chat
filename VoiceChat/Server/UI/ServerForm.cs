@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
-using Server.Server;
+using Server.Core;
 
-namespace Server
+namespace Server.UI
 {
     public partial class ServerForm : Form
     {
