@@ -1,0 +1,48 @@
+﻿<Window x:Class="ClientBase.ClientForm"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:client="clr-namespace:Controls.Client;assembly=Controls"
+    Title="Client" Height="350" Width="542" Closing="ClientForm_OnClosing"
+        Closed="ClientForm_OnClosed"
+        Loaded="ClientForm_Load">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="20"/>
+            <RowDefinition Height="169*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MaxWidth="100"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <client:ChatTabControl x:Name="tbChat" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" Grid.RowSpan="2" Margin="5,10,10,5" SelectionChanged="tbChat_SelectionChanged"
+                               ContextMenuOpening="FrameworkElement_OnContextMenuOpening">
+                <client:ChatTabControl.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="closeTab" Header="Close Tab" Click="CloseTab_OnClick"/>
+                </ContextMenu>
+            </client:ChatTabControl.ContextMenu>
+        </client:ChatTabControl>
+        
+        <ListBox x:Name="lbUsers" HorizontalAlignment="Stretch" Grid.Column="0"  VerticalAlignment="Stretch" Margin="10,10,5,5"
+                 Grid.Row="0" Grid.RowSpan="2" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionChanged="lbUsers_SelectionChanged" ToolTipService.ShowDuration="4000">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                    <EventSetter Event="MouseDoubleClick" Handler="lbUsers_MouseDoubleClick"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ToolTip>
+                <ToolTip x:Name="toolTip">
+                <StackPanel>
+                    <TextBlock FontWeight="Bold">Users List</TextBlock>
+                    <TextBlock>Double click on selected user to start conversation.</TextBlock>
+                </StackPanel>
+                </ToolTip>
+            </ListBox.ToolTip> 
+        </ListBox>
+        <TextBox x:Name="tbMessage" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Margin="10,0,200,7.5" Grid.Row="2" TextWrapping="Wrap" Height="42" Grid.ColumnSpan="2"
+                 Grid.Column="0" KeyDown="tbMessage_KeyDown" TextChanged="messageTextbox_TextChanged"/>
+        <Button x:Name="sendMsg" Content="Send Message" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" MaxWidth="90" MaxHeight="42" Grid.Row="2" MinWidth="90" MinHeight="42" Margin="0,0,105,7.5" Click="sendMessage_Click"/>
+        <Button x:Name="callBtn" Content="Call" Grid.Column="1" HorizontalAlignment="Right" Margin="337,0,10,0"  Grid.Row="2" VerticalAlignment="Top" MaxWidth="90" MaxHeight="42" MinWidth="90" MinHeight="42" Click="call_Click"/>
+    </Grid>
+</Window>

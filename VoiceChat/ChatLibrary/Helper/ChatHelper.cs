@@ -162,7 +162,7 @@ namespace ChatLibrary.Helper
     /// <summary>
     /// Represents connected client
     /// </summary>
-    public class Client
+    public class ConnectedClient
     {
         private readonly string userName;
         private readonly Socket connection;
@@ -176,7 +176,7 @@ namespace ChatLibrary.Helper
             get { return userName; }
         }
 
-        public Client(string userName, Socket connection)
+        public ConnectedClient(string userName, Socket connection)
         {
             this.userName = userName;
             this.connection = connection;

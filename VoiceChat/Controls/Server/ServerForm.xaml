@@ -1,0 +1,33 @@
+﻿<Window x:Class="Controls.Server.ServerForm"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" Title="Server startup"
+             MaxWidth="300" MaxHeight="300" MinHeight="300" MinWidth="300"
+             d:DesignHeight="300" d:DesignWidth="300" Closing="ServerForm_OnClosing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="connectedClients" Grid.Column="1" HorizontalAlignment="Left" Height="231" Margin="10.5,31,0,0" Grid.RowSpan="4" VerticalAlignment="Top" Width="127"/>
+        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Server Name:" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbServerName" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="23" Margin="10,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Text="Port Number:" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbPortNumber" HorizontalAlignment="Left" Height="23" Margin="10,31,0,0" Grid.Row="1" Grid.Column="0"
+                 TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Text="Network Interface:" VerticalAlignment="Top"/>
+        <ComboBox x:Name="cbInterfaces" HorizontalAlignment="Left" Margin="10,31,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Width="120"/>
+        <CheckBox x:Name="cbStartStop" Content="Start" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="3" Grid.Column="0"
+                  VerticalAlignment="Top" Checked="cbStartStop_Checked"/>
+        <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="10.5,10,0,0" TextWrapping="Wrap" Text="Connected Users:" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>
