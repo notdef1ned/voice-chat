@@ -7,8 +7,8 @@
     <ProjectGuid>{2A34E74A-0984-4C3D-870F-F50F68F5D575}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ChatLibrary</RootNamespace>
-    <AssemblyName>ChatLibrary</AssemblyName>
+    <RootNamespace>Backend</RootNamespace>
+    <AssemblyName>Backend</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,14 +41,15 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientCore\ChatClient.cs" />
-    <Compile Include="ClientCore\MessageEventArgs.cs" />
-    <Compile Include="ServerCore\ChatServer.cs" />
-    <Compile Include="ServerCore\CustomEventArgs.cs" />
-    <Compile Include="Helper\ChatHelper.cs" />
-    <Compile Include="Helper\Log.cs" />
+    <Compile Include="Client\ChatClient.cs" />
+    <Compile Include="Client\MessageEventArgs.cs" />
+    <Compile Include="Server\ChatServer.cs" />
+    <Compile Include="Server\CustomEventArgs.cs" />
+    <Compile Include="Helpers\ChatHelper.cs" />
+    <Compile Include="Helpers\Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

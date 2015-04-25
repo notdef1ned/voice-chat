@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using ChatLibrary.ClientCore;
+using Backend.Client;
 using Controls.Client;
 
 namespace ClientBase
@@ -14,15 +14,23 @@ namespace ClientBase
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
         }
 
+        /// <summary>
+        /// Launching client window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
             var connectForm = new ConnectForm();
             if (connectForm.ShowDialog() != true)
                 return;
             var chatClient = new ChatClient(connectForm.PortNumber, connectForm.IpAddress, connectForm.UserName);
-            if (!chatClient.IsConnected) 
+            if (!chatClient.IsConnected)
+            {
+                Current.Shutdown();
                 return;
-            var clientForm = new ClientForm(chatClient);
+            }
+            var clientForm = new ClientWindow(chatClient);
             clientForm.Show();
         }
     }

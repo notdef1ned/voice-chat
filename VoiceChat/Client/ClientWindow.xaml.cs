@@ -4,9 +4,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ChatLibrary.ClientCore;
-using ChatLibrary.Helper;
-using Client.Client;
+using System.Windows.Media;
+using Backend.Client;
+using Backend.Helper;
 using Controls.Client;
 
 namespace ClientBase
@@ -14,9 +14,9 @@ namespace ClientBase
     /// <summary>
     /// Interaction logic for ClientForm.xaml
     /// </summary>
-    public partial class ClientForm
+    public partial class ClientWindow
     {
-        public ClientForm()
+        public ClientWindow()
         {
             InitializeComponent();
         }
@@ -28,7 +28,7 @@ namespace ClientBase
         private delegate void EndConversation();
 
         public ChatClient ChatClient { get; set; }
-        public ClientForm(ChatClient client)
+        public ClientWindow(ChatClient client)
         {
             InitializeComponent();
             ChatClient = client;
@@ -115,23 +115,38 @@ namespace ClientBase
                     userPage.DialogBox.AppendText(connStr);
                     userPage.DialogBox.AppendText(Environment.NewLine);
                 }
-                if (userList == string.Empty)
-                {
-                    lbUsers.Items.Clear();
-                    return;
-                }
+                allPanel.Children.Clear();
                 var users = userList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var user in users)
-                    lbUsers.Items.Add(user);
+                {
+                    AddUserButton(user);        
+                }
             }
 
         }
 
+        private void AddUserButton(string userName)
+        {
+            var userBtn = new Button
+            {
+                Content = userName,
+                BorderBrush = Brushes.Transparent,
+                Background = Brushes.Transparent,
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            userBtn.MouseDoubleClick += user_DoubleClick;
+            allPanel.Children.Add(userBtn);
+        }
+
         private void call_Click(object sender, RoutedEventArgs e)
         {
-            var user = lbUsers.SelectedItem.ToString();
-            callForm = new CallForm(user, FormType.Outcoming);
-            ChatClient.SendChatRequest(user);
+            var currentTabPage = tbChat.SelectedItem as ChatTabItem;
+            if (currentTabPage != null && (string) currentTabPage.Header != ChatHelper.Global)
+            {
+                var user = (string) currentTabPage.Header;
+                callForm = new CallForm(user, FormType.Outcoming);
+                ChatClient.SendChatRequest(user);
+            }
             callForm.ShowDialog();
             if (callForm.DialogResult == true)
                 ChatClient.SendResponse(Command.EndCall);
@@ -254,12 +269,12 @@ namespace ClientBase
             SendMessage();
         }
 
-        private void lbUsers_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void user_DoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var item = e.Source as ListBoxItem;
+            var item = e.Source as Button;
             if (item == null)
                 return;
-            var name = lbUsers.SelectedItem.ToString();
+            var name = (string)item.Content;
             tbChat.SelectedItem = FindTabPage(name) ?? AddTabPage(name);
         }
 

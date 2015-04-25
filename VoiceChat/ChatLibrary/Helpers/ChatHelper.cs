@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 
-namespace ChatLibrary.Helper
+namespace Backend.Helper
 {
     public static class ChatHelper
     {

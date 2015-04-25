@@ -7,10 +7,9 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using ChatLibrary.Helper;
-using Server;
+using Backend.Helper;
 
-namespace ChatLibrary.ServerCore
+namespace Backend.Server
 {
     public class ChatServer
     {

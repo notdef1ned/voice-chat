@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using ChatLibrary.Helper;
+using Backend.Helper;
 
 namespace Controls.Client
 {

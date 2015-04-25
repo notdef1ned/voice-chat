@@ -4,23 +4,23 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Windows;
-using ChatLibrary.ServerCore;
+using Backend.Server;
 using Server;
 
 namespace Controls.Server
 {
-    public partial class ServerForm : Window
+    public partial class ServerWindow
     {
         private ChatServer server;
-        public delegate void SetListBoxItem(String str, String type);
-        public ServerForm()
+        public delegate void SetListBoxItem(string str, string type);
+        public ServerWindow()
         {
             InitializeComponent();
             ObtainNetworkInterfaces();
         }
 
 
-        private void cbStartStop_Checked(object sender, EventArgs e)
+        private void cbStartStop_Checked(object sender, RoutedEventArgs e)
         {
             if (cbStartStop.IsChecked == true)
             {
@@ -152,5 +152,6 @@ namespace Controls.Server
             if (server != null)
                 server.StopServer();
         }
+
     }
 }

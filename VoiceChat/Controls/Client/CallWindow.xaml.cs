@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
+using Backend.Helper;
 using BaseControls;
-using ChatLibrary.Helper;
 using Controls.Client.Controls;
 
 namespace Controls.Client

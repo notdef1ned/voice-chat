@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Client.Client
+namespace Backend.Client
 {
     public class ServerEventArgs : EventArgs
     {

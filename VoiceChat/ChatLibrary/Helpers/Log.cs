@@ -1,4 +1,4 @@
-﻿namespace ChatLibrary.Helper
+﻿namespace Backend.Helper
 {
     public static class Log
     {

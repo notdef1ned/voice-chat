@@ -5,11 +5,10 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using ChatLibrary.Helper;
-using Client.Client;
+using Backend.Helper;
 using NAudio.Wave;
 
-namespace ChatLibrary.ClientCore
+namespace Backend.Client
 {
     public class ChatClient
     {

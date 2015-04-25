@@ -1,4 +1,4 @@
-﻿<Window x:Class="Controls.Server.ServerForm"
+﻿<Window x:Class="Controls.Server.ServerWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -26,7 +26,7 @@
         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Text="Network Interface:" VerticalAlignment="Top"/>
         <ComboBox x:Name="cbInterfaces" HorizontalAlignment="Left" Margin="10,31,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Width="120"/>
         <CheckBox x:Name="cbStartStop" Content="Start" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="3" Grid.Column="0"
-                  VerticalAlignment="Top" Checked="cbStartStop_Checked"/>
+                  VerticalAlignment="Top" Checked="cbStartStop_Checked" Unchecked="cbStartStop_Checked"/>
         <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="10.5,10,0,0" TextWrapping="Wrap" Text="Connected Users:" VerticalAlignment="Top"/>
 
     </Grid>

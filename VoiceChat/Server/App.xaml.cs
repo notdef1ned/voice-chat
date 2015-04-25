@@ -8,10 +8,5 @@ namespace Server
     /// </summary>
     public partial class App
     {
-        private void App_OnStartup(object sender, StartupEventArgs e)
-        {
-            var serverForm = new ServerForm();
-            serverForm.Show();
-        }
     }
 }
