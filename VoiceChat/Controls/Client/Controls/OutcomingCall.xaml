@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:baseControls="clr-namespace:BaseControls;assembly=BaseControls"
              mc:Ignorable="d" 
+             Background="#EDEFF0"
              d:DesignHeight="100" d:DesignWidth="200" Orientation="Horizontal">
-    <Button x:Name="reject" Content="Reject" HorizontalAlignment="Center" VerticalAlignment="Center"  MinWidth="120" Margin="40,0,0,0" />
+    <Button x:Name="reject" Background="#EDEFF0" BorderBrush="Gainsboro"  Content="Reject" HorizontalAlignment="Center" VerticalAlignment="Center"  MinWidth="120" Margin="40,0,0,0" />
 
 </baseControls:ChatStackPanel>

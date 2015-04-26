@@ -1,13 +1,13 @@
 ﻿using System.Windows.Controls;
 using Backend.Helper;
 
-namespace Controls.Client
+namespace BaseControls
 {
-    public class ChatTabControl : TabControl
+    public class BaseTabControl : TabControl
     {
         public ChatTabItem GlobalPage { get; set; }
 
-        public ChatTabControl()
+        public BaseTabControl()
         {
             GlobalPage = new ChatTabItem {Header = ChatHelper.Global};
             Items.Add(GlobalPage);

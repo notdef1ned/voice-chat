@@ -3,10 +3,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using Backend.Client;
 using Backend.Helper;
+using BaseControls;
 using Controls.Client;
 
 namespace ClientBase
@@ -21,8 +24,14 @@ namespace ClientBase
             InitializeComponent();
         }
 
-        private CallForm callForm;
+        #region WndProc Hook
+        public const int WM_SYSCOMMAND = 0x112;
+        public const int SC_MAXIMIZE = 0xF030;
+        public const int SC_SIZE = 0xF000;
+        #endregion
 
+
+        private CallForm callForm;
         private delegate void SetUserList(object sender, EventArgs e);
         private delegate void RecieveMessage(object sender, EventArgs e);
         private delegate void EndConversation();
@@ -36,10 +45,17 @@ namespace ClientBase
             ChatClient.MessageReceived += chatClient_MessageReceived;
             ChatClient.CallRecieved += ChatClient_CallRecieved;
             ChatClient.CallRequestResponded += ChatClient_CallRequestResponded;
-
-            Title = ChatClient.Init() ? string.Format("{0} connected to {1} ({2})", ChatClient.UserName, ChatClient.ServerName,
+            AllList.IsExpanded = true;
+            Loaded += ClientWindow_Loaded;
+            title.Text = ChatClient.Init() ? string.Format("{0} connected to {1} ({2})", ChatClient.UserName, ChatClient.ServerName,
                 ChatClient.ServerAddress) : "Disconnected";
             SetButtons();
+        }
+
+        private void ClientWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+            if (source != null) source.AddHook(WndProc);
         }
 
         private void ChatClient_CallRequestResponded(object sender, EventArgs e)
@@ -124,7 +140,6 @@ namespace ClientBase
             }
 
         }
-
         private void AddUserButton(string userName)
         {
             var userBtn = new Button
@@ -132,9 +147,9 @@ namespace ClientBase
                 Content = userName,
                 BorderBrush = Brushes.Transparent,
                 Background = Brushes.Transparent,
-                HorizontalAlignment = HorizontalAlignment.Stretch
+                HorizontalAlignment = HorizontalAlignment.Left
             };
-            userBtn.MouseDoubleClick += user_DoubleClick;
+            userBtn.Click += user_DoubleClick;
             allPanel.Children.Add(userBtn);
         }
 
@@ -269,7 +284,7 @@ namespace ClientBase
             SendMessage();
         }
 
-        private void user_DoubleClick(object sender, MouseButtonEventArgs e)
+        private void user_DoubleClick(object sender, RoutedEventArgs e)
         {
             var item = e.Source as Button;
             if (item == null)
@@ -278,21 +293,6 @@ namespace ClientBase
             tbChat.SelectedItem = FindTabPage(name) ?? AddTabPage(name);
         }
 
-
-        private void tcChat_MouseClick(object sender, MouseEventArgs e)
-        {
-           // if (e.Button != MouseButtons.Right)
-           //     return;
-           // closeItem.Enabled = tcChat.SelectedTab != null
-           //                     && tcChat.SelectedTab != tcChat.GlobalPage;
-           // contextMenu.Show(Cursor.Position);
-        }
-
-
-        private void lbUsers_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            SetButtons();
-        }
 
         private void messageTextbox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -323,5 +323,74 @@ namespace ClientBase
                 closeTab.IsEnabled = false;
 
         }
+
+        private void Header_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+                DragMove();
+        }
+        /// <summary>
+        /// Drag delta  
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            if (this.Width + e.HorizontalChange > 10)
+                this.Width += e.HorizontalChange;
+            if (this.Height + e.VerticalChange > 10)
+                this.Height += e.VerticalChange;
+
+        }
+
+        #region Command Bindings
+        private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void CommandBinding_Executed_Close(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
+        }
+
+        private void CommandBinding_Executed_Maximize(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                SystemCommands.RestoreWindow(this);
+                Maximize.Content = Resources["Maximize"];
+            }
+            else
+            {
+                SystemCommands.MaximizeWindow(this);
+                Maximize.Content = Resources["Restore"];
+            }
+        }
+
+        #region WndProc Hook
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg != WM_SYSCOMMAND) 
+                return IntPtr.Zero;
+            switch (wParam.ToInt32())
+            {
+                case SC_MAXIMIZE:
+                    Maximize.Content = Resources["Restore"];
+                    break;
+                case SC_SIZE:
+                    Maximize.Content = Resources["Maximize"];
+                    break;
+            }
+            return IntPtr.Zero;
+        }
+        #endregion
+
+        private void CommandBinding_Executed_Minimize(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.MinimizeWindow(this);
+        }
+        #endregion
+
     }
 }

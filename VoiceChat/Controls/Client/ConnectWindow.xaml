@@ -4,27 +4,35 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+             WindowStyle="None"
              ResizeMode="NoResize"
+             AllowsTransparency="True"
+             Background="Transparent"
              WindowStartupLocation="CenterScreen"
-             Title="Connect" Width="265.5" Height="181">
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="1*"/>
-        </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Text="Host Name:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0"/>
-        <TextBox x:Name="tbHost" MaxHeight="20" MinHeight="20" Grid.Row="0" Grid.Column="1" TextChanged="tbHost_TextChanged" Margin="10,0,10,0"/>
-        <TextBlock Grid.Row="1" Text="Port:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" TextAlignment="Right"/>
-        <TextBox x:Name="tbPort" MaxHeight="20" MinHeight="20" Grid.Row="1" Grid.Column="1" TextChanged="tbPort_TextChanged" Margin="10,0,10,0"/>
-        <TextBlock Grid.Row="2" Text="UserName:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0"/>
-        <TextBox x:Name="tbUser" MaxHeight="20" MinHeight="20" Grid.Row="2" Grid.Column="1" TextChanged="tbName_TextChanged" Margin="10,0,10,0"/>
-        <Button x:Name="btnOk" Grid.ColumnSpan="2" Grid.Column="0" Content="OK" HorizontalAlignment="Left" VerticalAlignment="Top" Width="76" Margin="40,5,0,0" Grid.Row="3" Click="Button_Click"/>
-        <Button x:Name="btnCancel" Content="Cancel" Grid.Column="1" HorizontalAlignment="Left" Margin="68.5,5,0,0" IsCancel="True" Grid.Row="3" VerticalAlignment="Top" Width="76" Click="Button_Click_1"/>
-    </Grid>
+             Title="Connect" Width="265.5" Height="150">
+    <Border BorderBrush="#EDEFF0" BorderThickness="2" CornerRadius="6" Background="#EDEFF0">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MinHeight="20"/>
+                <RowDefinition Height="Auto" MinHeight="30"/>
+                <RowDefinition Height="Auto" MinHeight="30"/>
+                <RowDefinition Height="Auto" MinHeight="30"/>
+                <RowDefinition Height="Auto" MinHeight="30"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock TextAlignment="Center" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">Connect</TextBlock>
+            <TextBlock Grid.Row="1" Text="Host Name:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,6" Grid.ColumnSpan="2" Height="16" Width="62"/>
+            <TextBox x:Name="tbHost" MaxHeight="20" MinHeight="20" Grid.Row="0" Grid.Column="1" TextChanged="tbHost_TextChanged" Margin="10,10,9.5,24" Grid.RowSpan="3"/>
+            <TextBlock Grid.Row="2" Text="Port:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,9,0,9" TextAlignment="Right" Height="16" Width="25"/>
+            <TextBox x:Name="tbPort" MaxHeight="20" MinHeight="20" Grid.Row="2" Grid.Column="1" TextChanged="tbPort_TextChanged" Margin="10,0,9.5,0"/>
+            <TextBlock Grid.Row="3" Text="UserName:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,11,0,9" Height="14" Width="58"/>
+            <TextBox x:Name="tbUser" MaxHeight="20" MinHeight="20" Grid.Row="3" Grid.Column="1" TextChanged="tbName_TextChanged" Margin="10,0,9.5,0"/>
+            <Button x:Name="btnOk" Grid.ColumnSpan="2" Grid.Column="0" Content="OK" HorizontalAlignment="Left" VerticalAlignment="Center" Width="76" Margin="40,0,0,0" Grid.Row="4" Click="Button_Click"
+                BorderBrush="Gainsboro" Background="#EDEFF0"/>
+            <Button x:Name="btnCancel" BorderBrush="Gainsboro" Background="#EDEFF0" Content="Cancel" Grid.Column="1"  HorizontalAlignment="Left" Margin="68,0,0,0" IsCancel="True" Grid.Row="4" VerticalAlignment="Center" Width="76" Click="Button_Click_1" Height="20"/>
+        </Grid>
+    </Border>
 </Window>

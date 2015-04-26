@@ -6,8 +6,9 @@
              xmlns:baseControls="clr-namespace:BaseControls;assembly=BaseControls"
              mc:Ignorable="d" 
              Orientation="Horizontal"
-             d:DesignHeight="100" d:DesignWidth="300">
-    
-        <Button x:Name="endConversation" Content="End Conversation" HorizontalAlignment="Center" Margin="90,0,0,0" VerticalAlignment="Center" MinWidth="120" IsCancel="True"/>
+             d:DesignHeight="100" d:DesignWidth="300"
+                             Background="#EDEFF0">
+
+    <Button x:Name="endConversation" Content="End Conversation" BorderBrush="Gainsboro" Background="#EDEFF0" HorizontalAlignment="Center" Margin="90,0,0,0" VerticalAlignment="Center" MinWidth="120" IsCancel="True"/>
     
 </baseControls:ChatStackPanel>

@@ -5,8 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:baseControls="clr-namespace:BaseControls;assembly=BaseControls"
              mc:Ignorable="d" 
+             Background="#EDEFF0"
              d:DesignHeight="100" d:DesignWidth="200" Orientation="Horizontal">
-    
-        <Button x:Name="btnAccept" Content="Accept" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="75" Margin="15,0,0,0" MinWidth="75"/>
-        <Button x:Name="btnDecline" Content="Decline" VerticalAlignment="Center" HorizontalAlignment="Center"  Margin="20,0,0,0" MaxWidth="75" MinWidth="75"/>
-    </baseControls:ChatStackPanel>
+
+    <Button x:Name="btnAccept" Background="#EDEFF0" BorderBrush="Gainsboro" Content="Accept" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="75" Margin="15,0,0,0" MinWidth="75"/>
+    <Button x:Name="btnDecline" Background="#EDEFF0" BorderBrush="Gainsboro" Content="Decline" VerticalAlignment="Center" HorizontalAlignment="Center"  Margin="20,0,0,0" MaxWidth="75" MinWidth="75"/>
+
+</baseControls:ChatStackPanel>
