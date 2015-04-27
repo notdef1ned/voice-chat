@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using Backend.Helper;
+using Backend.Helpers;
 
 namespace Controls.Client
 {
@@ -44,7 +45,7 @@ namespace Controls.Client
             }
             catch (Exception)
             {
-                MessageBox.Show(ChatHelper.PortError);
+                MessageBox.Show(ChatHelper.PORT_ERROR);
             }
         }
 

@@ -6,7 +6,7 @@
              xmlns:baseControls="clr-namespace:BaseControls;assembly=BaseControls"
              mc:Ignorable="d" 
              Background="#EDEFF0"
-             d:DesignHeight="100" d:DesignWidth="200" Orientation="Horizontal">
-    <Button x:Name="reject" Background="#EDEFF0" BorderBrush="Gainsboro"  Content="Reject" HorizontalAlignment="Center" VerticalAlignment="Center"  MinWidth="120" Margin="40,0,0,0" />
+             d:DesignHeight="100" d:DesignWidth="200" Orientation="Horizontal" MaxHeight="100" MinHeight="100" MaxWidth="300" MinWidth="300">
+    <Button x:Name="reject" Background="#EDEFF0" BorderBrush="Gainsboro"  Content="Reject" MinWidth="150" Margin="75,40"/>
 
 </baseControls:ChatStackPanel>

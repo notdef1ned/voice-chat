@@ -1,4 +1,4 @@
-﻿<Window x:Class="ClientBase.ClientWindow"
+﻿<client:ChatWindow x:Class="ClientBase.ClientWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:client="clr-namespace:BaseControls;assembly=BaseControls"
@@ -15,7 +15,7 @@
         <Image x:Key="Send" Source="Resources/send_message.ico"/>
         <Image x:Key="Call" Source="Resources/call.ico"/>
         <Image x:Key="Restore" Source="Resources/restore.ico"/>
-        
+
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Close" />
@@ -32,11 +32,10 @@
         <Button Content="{StaticResource Close}" Canvas.Right="10" Margin="0,5,0,0" Canvas.ZIndex="1" MinWidth="25" MinHeight="25" MaxWidth="25" MaxHeight="25"
                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                 Background="Transparent" BorderBrush="Transparent"/>
-        <Border BorderBrush="#EDEFF0" BorderThickness="2" CornerRadius="6" 
-            Background="#EDEFF0" Width="{Binding ActualWidth, ElementName=Canvas}" MouseMove="Header_MouseMove"
-            Height="{Binding ActualHeight, ElementName=Canvas}">
-
-            <Grid>
+        <Border x:Name="windowBorder" BorderBrush="#EDEFF0" BorderThickness="2" CornerRadius="6" 
+                        Background="#EDEFF0" Width="{Binding ActualWidth, ElementName=Canvas}"
+                        Height="{Binding ActualHeight, ElementName=Canvas}">
+            <Grid HorizontalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" MinHeight="30"/>
                     <RowDefinition Height="Auto" />
@@ -90,20 +89,20 @@
                     </client:BaseTabControl.Resources>
                 </client:BaseTabControl>
 
-                <TextBox x:Name="tbMessage" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Margin="10,0,102.5,9" Grid.Row="4" TextWrapping="Wrap" Height="42" Grid.ColumnSpan="2"
+                <TextBox x:Name="tbMessage" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Margin="10,0,102,9" Grid.Row="4" TextWrapping="Wrap" Height="42" Grid.ColumnSpan="2"
                                 Grid.Column="0" BorderBrush="Gainsboro" KeyDown="tbMessage_KeyDown" TextChanged="messageTextbox_TextChanged"/>
                 <Button x:Name="sendMsg" Content="{StaticResource Send}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" MaxWidth="42" MaxHeight="42" 
-                        Grid.Row="4" MinWidth="42" MinHeight="42" Margin="0,0,55,10" 
+                        Grid.Row="4" MinWidth="42" MinHeight="42" Margin="0,1,55,9" 
                         Click="sendMessage_Click" BorderBrush="Transparent" Background="Transparent"/>
                 <Button x:Name="callBtn" Content="{StaticResource Call}" 
                         HorizontalAlignment="Right" VerticalAlignment="Center" 
                         Grid.Column="1" MaxWidth="42" MaxHeight="42" Grid.Row="4" 
-                        MinWidth="42" MinHeight="42" Margin="0,0.5,8.5,9" Click="call_Click"
+                        MinWidth="42" MinHeight="42" Margin="0,0,8,8" Click="call_Click"
                         BorderBrush="Transparent" Background="Transparent"/>
                 <Expander x:Name="MainMenu" Header="Menu" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="1.5,9,0,0">
                     <StackPanel x:Name="mainPanel">
-                        <Button Margin="4" HorizontalAlignment="Left" Content="Profile" Background="Transparent" BorderBrush="Transparent" BorderThickness="0"/>
-                        <Button Margin="4" HorizontalAlignment="Left" Content="Settings" Background="Transparent" BorderBrush="Transparent" BorderThickness="0"/>
+                        <Button Margin="4" HorizontalAlignment="Left" Content="Profile" Background="Transparent" BorderBrush="Transparent"/>
+                        <Button Margin="4" HorizontalAlignment="Left" Content="Settings" Background="Transparent" BorderBrush="Transparent"/>
                     </StackPanel>
                 </Expander>
                 <Expander Header="Friends" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" x:Name="Friendlist" Margin="1.5,10,0,0" Width="64" >
@@ -112,11 +111,14 @@
                     </StackPanel>
                 </Expander>
                 <Expander Header="All Users" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" x:Name="AllList" Margin="1.5,10,0,0.5" Width="84">
+                    <Expander.ToolTip>
+                        <TextBlock Text="Click on user to start chat"/>
+                    </Expander.ToolTip>
                     <StackPanel x:Name="allPanel">
                         <TextBlock Margin ="4">no users online</TextBlock>
                     </StackPanel>
                 </Expander>
             </Grid>
-        </Border>
+         </Border>
     </Canvas>
-</Window>
+</client:ChatWindow>

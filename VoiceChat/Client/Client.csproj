@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>client_icon.ico</ApplicationIcon>
+    <ApplicationIcon>chat_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -155,7 +155,7 @@
     <Resource Include="Resources\restore.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="client_icon.ico" />
+    <Resource Include="chat_icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

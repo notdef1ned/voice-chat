@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Backend.Helper;
+using Backend.Helpers;
 
 namespace Backend.Server
 {
@@ -124,14 +125,14 @@ namespace Backend.Server
             OnClientConnected(socket, newUserName);
 
             foreach (var client in clients)
-                SendUsersList(client.Connection, client.UserName, newUserName, ChatHelper.Connected);
+                SendUsersList(client.Connection, client.UserName, newUserName, ChatHelper.CONNECTED);
            
             var state = new ChatHelper.StateObject
             {
                 WorkSocket = socket
             };
             
-            socket.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0,
+            socket.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BUFFER_SIZE, 0,
             OnReceive, state);
 
             ChatHelper.WriteToEventLog(Log.ClientConnected, EventLogEntryType.Information);
@@ -209,7 +210,7 @@ namespace Backend.Server
             if (clientStr == null) 
                 return;
             clientStr.Connection.Send(data.ToByte());
-            handlerSocket.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0,
+            handlerSocket.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BUFFER_SIZE, 0,
               OnReceive, state);
         }
 
@@ -229,7 +230,7 @@ namespace Backend.Server
             clients.Remove(clientStr);
 
             foreach (var client in clients)
-                SendUsersList(client.Connection, client.UserName, clientStr.UserName, ChatHelper.Disconnected);
+                SendUsersList(client.Connection, client.UserName, clientStr.UserName, ChatHelper.DISCONNECTED);
 
             ChatHelper.WriteToEventLog(Log.ClientDisconnected, EventLogEntryType.Information);
         }

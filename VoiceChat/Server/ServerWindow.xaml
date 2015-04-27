@@ -1,15 +1,16 @@
-﻿<Window x:Class="Controls.Server.ServerWindow"
+﻿<baseControls:ChatWindow x:Class="Server.ServerWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:baseControls="clr-namespace:BaseControls;assembly=BaseControls"
              mc:Ignorable="d" Title="Server startup"
              WindowStyle="None"
              AllowsTransparency="True"
              ResizeMode="NoResize"
              Background="Transparent"
              MinHeight="300" MinWidth="300" Closing="ServerForm_OnClosing" Width="296.684" Height="287.293">
-    <Border BorderBrush="#EDEFF0" BorderThickness="2" CornerRadius="6" Background="#EDEFF0">
+    <Border x:Name="windowBorder" BorderBrush="#EDEFF0" BorderThickness="2" CornerRadius="6" Background="#EDEFF0">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -35,4 +36,4 @@
 
     </Grid>
        </Border>
-</Window>
+</baseControls:ChatWindow>

@@ -8,7 +8,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Backend.Client;
-using Backend.Helper;
+using Backend.Helpers;
 using BaseControls;
 using Controls.Client;
 
@@ -156,7 +156,7 @@ namespace ClientBase
         private void call_Click(object sender, RoutedEventArgs e)
         {
             var currentTabPage = tbChat.SelectedItem as ChatTabItem;
-            if (currentTabPage != null && (string) currentTabPage.Header != ChatHelper.Global)
+            if (currentTabPage != null && (string) currentTabPage.Header != ChatHelper.GLOBAL)
             {
                 var user = (string) currentTabPage.Header;
                 callForm = new CallForm(user, FormType.Outcoming);
@@ -317,18 +317,14 @@ namespace ClientBase
         private void FrameworkElement_OnContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             var tab = tbChat.SelectedItem as ChatTabItem;
-            if (tab != null && (string) tab.Header != ChatHelper.Global)
+            if (tab != null && (string) tab.Header != ChatHelper.GLOBAL)
                 closeTab.IsEnabled = true;
             else
                 closeTab.IsEnabled = false;
 
         }
 
-        private void Header_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-                DragMove();
-        }
+        
         /// <summary>
         /// Drag delta  
         /// </summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using Backend.Helper;
+using Backend.Helpers;
 using BaseControls;
 using Controls.Client.Controls;
 
@@ -43,19 +44,21 @@ namespace Controls.Client
                 {
                     case FormType.Conversation:
                         StackPanel = new Conversation();
-                        Title = string.Format("{0}: {1}", ChatHelper.Conversation, caller);
+                        Title = string.Format("{0}: {1}", ChatHelper.CONVERSATION, caller);
                         break;
                     case FormType.Incoming:
                         StackPanel = new IncomingCall();
-                        Title = string.Format("{0}: {1}", ChatHelper.IncomingCall, caller);
+                        Title = string.Format("{0}: {1}", ChatHelper.INCOMING_CALL, caller);
                         break;
                     case FormType.Outcoming:
                         StackPanel = new OutcomingCall();
-                        Title = string.Format("{0}: {1}", ChatHelper.OutcomingCall, caller);
+                        Title = string.Format("{0}: {1}", ChatHelper.OUTCOMING_CALL, caller);
                         break;
                 }
                 if (StackPanel == null)
                     return;
+                StackPanel.HorizontalAlignment = HorizontalAlignment.Center;
+                StackPanel.VerticalAlignment = VerticalAlignment.Center;
                 SubscribePanel();
                 Content = StackPanel;
             }

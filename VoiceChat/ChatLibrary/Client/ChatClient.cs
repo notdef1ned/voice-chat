@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using Backend.Helper;
+using Backend.Helpers;
 using NAudio.Wave;
 
 namespace Backend.Client
@@ -125,7 +125,7 @@ namespace Backend.Client
                 WorkSocket = server.Client
             };
 
-            server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0,
+            server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BUFFER_SIZE, 0,
                 OnReceive, state);
         }
 
@@ -165,7 +165,7 @@ namespace Backend.Client
                     return;
                 ParseMessage(new Data(state.Buffer));
                 
-                server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BufferSize, 0, OnReceive, state);
+                server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BUFFER_SIZE, 0, OnReceive, state);
             }
             catch (SocketException)
             {
@@ -189,7 +189,7 @@ namespace Backend.Client
 
                 var ep = (EndPoint)localEndPoint;
                 if (udpConnectionActive)
-                    handler.BeginReceiveFrom(state.Buffer, 0, ChatHelper.StateObject.BufferSize, SocketFlags.None, ref ep, OnUdpRecieve, state);
+                    handler.BeginReceiveFrom(state.Buffer, 0, ChatHelper.StateObject.BUFFER_SIZE, SocketFlags.None, ref ep, OnUdpRecieve, state);
             }
             catch (Exception)
             {
@@ -307,7 +307,7 @@ namespace Backend.Client
             {
                 var state = new ChatHelper.StateObject { WorkSocket = clientSocket };
                 var ep = remoteEndPoint as EndPoint;
-                clientSocket.BeginReceiveFrom(state.Buffer, 0, ChatHelper.StateObject.BufferSize, SocketFlags.None, ref ep,
+                clientSocket.BeginReceiveFrom(state.Buffer, 0, ChatHelper.StateObject.BUFFER_SIZE, SocketFlags.None, ref ep,
                     OnUdpRecieve, state);
             }
             catch (Exception)

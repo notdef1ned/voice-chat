@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using Backend.Helper;
+using Backend.Helpers;
 
 namespace BaseControls
 {
@@ -9,7 +9,7 @@ namespace BaseControls
 
         public BaseTabControl()
         {
-            GlobalPage = new ChatTabItem {Header = ChatHelper.Global};
+            GlobalPage = new ChatTabItem {Header = ChatHelper.GLOBAL};
             Items.Add(GlobalPage);
         }
     }

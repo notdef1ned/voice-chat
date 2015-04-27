@@ -5,9 +5,8 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Windows;
 using Backend.Server;
-using Server;
 
-namespace Controls.Server
+namespace Server
 {
     public partial class ServerWindow
     {

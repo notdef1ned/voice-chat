@@ -70,6 +70,8 @@
     <Compile Include="ChatStackPanel.cs" />
     <Compile Include="BaseTabControl.cs" />
     <Compile Include="ChatTabPage.cs" />
+    <Compile Include="ChatWindow.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -98,6 +100,12 @@
       <Project>{2A34E74A-0984-4C3D-870F-F50F68F5D575}</Project>
       <Name>Backend</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

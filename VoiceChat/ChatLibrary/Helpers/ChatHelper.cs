@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
+using Backend.Helper;
 
-namespace Backend.Helper
+namespace Backend.Helpers
 {
     public static class ChatHelper
     {
         #region Titles
 
-        public const string Conversation = "Conversation";
-        public const string IncomingCall = "Incoming Call";
-        public const string OutcomingCall = "Calling";
-        public const string Global = "Global";
-        public const string Connected = "connected";
-        public const string Disconnected = "disconnected";
+        public const string CONVERSATION = "Conversation";
+        public const string INCOMING_CALL = "Incoming Call";
+        public const string OUTCOMING_CALL = "Calling";
+        public const string GLOBAL = "Global";
+        public const string CONNECTED = "connected";
+        public const string DISCONNECTED = "disconnected";
         #endregion
 
         #region Errors
-        public const string PortError = "Port number should be between 0 and 65535";
+        public const string PORT_ERROR = "Port number should be between 0 and 65535";
         #endregion
 
         public class StateObject
@@ -27,9 +28,9 @@ namespace Backend.Helper
             // Client  socket.
             public Socket WorkSocket = null;
             // Size of receive buffer.
-            public const int BufferSize = 65536;
+            public const int BUFFER_SIZE = 65536;
             // Receive buffer.
-            public byte[] Buffer = new byte[BufferSize];
+            public byte[] Buffer = new byte[BUFFER_SIZE];
             // Received data string.
             public StringBuilder Sb = new StringBuilder();
         }
