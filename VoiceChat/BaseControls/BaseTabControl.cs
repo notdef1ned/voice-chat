@@ -5,7 +5,27 @@ namespace BaseControls
 {
     public class BaseTabControl : TabControl
     {
+        
+        #region Fields
+        private ChatTabItem settingsPage;
+        #endregion
+
+        #region Properties
         public ChatTabItem GlobalPage { get; set; }
+        public ChatTabItem SettingsPage
+        {
+            get
+            {
+                return settingsPage;
+            }
+            set
+            {
+                Items.Add(value);
+                SelectedItem = value;
+                settingsPage = value;
+            } 
+        }
+        #endregion
 
         public BaseTabControl()
         {

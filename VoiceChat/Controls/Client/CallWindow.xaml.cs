@@ -1,11 +1,9 @@
-﻿using System;
-using System.Windows;
-using Backend.Helper;
+﻿using System.Windows;
 using Backend.Helpers;
 using BaseControls;
-using Controls.Client.Controls;
+using ChatControls.Client.Controls;
 
-namespace Controls.Client
+namespace ChatControls.Client
 {
     public partial class CallForm
     {

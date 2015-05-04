@@ -1,7 +1,6 @@
-﻿using System.Windows.Controls;
-using BaseControls;
+﻿using BaseControls;
 
-namespace Controls.Client.Controls
+namespace ChatControls.Client.Controls
 {
     /// <summary>
     /// Interaction logic for OurcomingCall.xaml

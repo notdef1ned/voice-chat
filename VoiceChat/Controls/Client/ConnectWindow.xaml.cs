@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using Backend.Helper;
 using Backend.Helpers;
 
-namespace Controls.Client
+namespace ChatControls.Client
 {
     public partial class ConnectForm
     {

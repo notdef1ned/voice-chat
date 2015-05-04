@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using Backend.Client;
-using Controls.Client;
+using ChatControls.Client;
 
 namespace ClientBase
 {

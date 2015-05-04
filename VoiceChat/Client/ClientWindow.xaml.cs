@@ -3,14 +3,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Backend.Client;
 using Backend.Helpers;
 using BaseControls;
-using Controls.Client;
+using ChatControls.Client;
+using ChatControls.Client.Pages;
 
 namespace ClientBase
 {
@@ -325,20 +325,6 @@ namespace ClientBase
         }
 
         
-        /// <summary>
-        /// Drag delta  
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
-        {
-            if (this.Width + e.HorizontalChange > 10)
-                this.Width += e.HorizontalChange;
-            if (this.Height + e.VerticalChange > 10)
-                this.Height += e.VerticalChange;
-
-        }
-
         #region Command Bindings
         private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -388,5 +374,16 @@ namespace ClientBase
         }
         #endregion
 
+        private void SettingsClick(object sender, RoutedEventArgs e)
+        {
+            if (tbChat.SettingsPage == null)
+            {
+                tbChat.SettingsPage = new SettingsPage(ChatClient);
+            }
+            else
+            {
+                tbChat.SelectedItem = tbChat.SettingsPage;
+            }
+        }
     }
 }

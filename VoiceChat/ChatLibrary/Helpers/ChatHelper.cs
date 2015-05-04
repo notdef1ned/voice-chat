@@ -15,6 +15,7 @@ namespace Backend.Helpers
         public const string INCOMING_CALL = "Incoming Call";
         public const string OUTCOMING_CALL = "Calling";
         public const string GLOBAL = "Global";
+        public const string SETTINGS = "Settings";
         public const string CONNECTED = "connected";
         public const string DISCONNECTED = "disconnected";
         #endregion

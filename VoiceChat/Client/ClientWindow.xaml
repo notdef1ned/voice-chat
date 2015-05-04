@@ -102,7 +102,7 @@
                 <Expander x:Name="MainMenu" Header="Menu" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="1.5,9,0,0">
                     <StackPanel x:Name="mainPanel">
                         <Button Margin="4" HorizontalAlignment="Left" Content="Profile" Background="Transparent" BorderBrush="Transparent"/>
-                        <Button Margin="4" HorizontalAlignment="Left" Content="Settings" Background="Transparent" BorderBrush="Transparent"/>
+                        <Button Margin="4" HorizontalAlignment="Left" Content="Settings" Background="Transparent" BorderBrush="Transparent" Click="SettingsClick"/>
                     </StackPanel>
                 </Expander>
                 <Expander Header="Friends" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" x:Name="Friendlist" Margin="1.5,10,0,0" Width="64" >

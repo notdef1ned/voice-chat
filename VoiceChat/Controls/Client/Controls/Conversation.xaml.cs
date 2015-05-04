@@ -1,6 +1,6 @@
 ﻿using BaseControls;
 
-namespace Controls.Client.Controls
+namespace ChatControls.Client.Controls
 {
     /// <summary>
     /// Interaction logic for Conversation.xaml

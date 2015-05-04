@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -44,6 +45,8 @@ namespace Backend.Client
         public string ServerName { get; set; }
         public string UserName { get; set; }
         public bool IsConnected { get; set; }
+        public int InputAudioDevice { get; set; }
+        public int OutputAudioDevice { get; set; }
 
         #endregion
 
@@ -108,7 +111,7 @@ namespace Backend.Client
             }
             //heartBeatThread = new Thread(HeartBeat);
             //heartBeatThread.Start();
-            waveProvider = new BufferedWaveProvider(new WaveFormat(8000, 16, WaveIn.GetCapabilities(0).Channels));
+            waveProvider = new BufferedWaveProvider(new WaveFormat(8000, 16, WaveIn.GetCapabilities(OutputAudioDevice).Channels));
             recievedStream = new WaveOut();
             recievedStream.Init(waveProvider);
 
@@ -262,7 +265,7 @@ namespace Backend.Client
 
             sourceStream = new WaveInEvent
             {
-                DeviceNumber = 0,
+                DeviceNumber = InputAudioDevice,
                 WaveFormat = new WaveFormat(8000, 16, WaveIn.GetCapabilities(0).Channels)
             };
 
@@ -411,6 +414,7 @@ namespace Backend.Client
 
         #endregion
 
+        
     }
 
     
