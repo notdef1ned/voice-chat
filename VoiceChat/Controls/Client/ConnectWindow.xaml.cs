@@ -58,5 +58,20 @@ namespace ChatControls.Client
             DialogResult = false;
         }
 
+        private void CbIsLocal_OnChecked(object sender, RoutedEventArgs e)
+        {
+            SetHostTextBox(false);
+        }
+
+        private void SetHostTextBox(bool isEnabled)
+        {
+            tbHost.IsEnabled = isEnabled;
+            tbHost.Text = (isEnabled) ? string.Empty : ChatHelper.LOCAL;
+        }
+
+        private void CbIsLocal_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            SetHostTextBox(true);
+        }
     }
 }

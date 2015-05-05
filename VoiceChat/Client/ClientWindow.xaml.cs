@@ -103,6 +103,7 @@ namespace ClientBase
         private ChatTabItem AddTabPage(string name)
         {
             var page = new ChatTabItem { Header = name };
+            page.DialogBox.Text += ChatHelper.ChatWith(name);
             tbChat.Items.Add(page);
             return page;
         }

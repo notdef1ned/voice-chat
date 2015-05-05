@@ -102,6 +102,8 @@ namespace ChatControls.Client.Pages
                 Select(endpoint => endpoint.FriendlyName).ToArray();
         }
 
+       
+
         #endregion
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 using Backend.Helpers;
 
 namespace BaseControls
@@ -30,7 +32,10 @@ namespace BaseControls
         public BaseTabControl()
         {
             GlobalPage = new ChatTabItem {Header = ChatHelper.GLOBAL};
+            GlobalPage.DialogBox.Text += ChatHelper.WelcomeMessage;
             Items.Add(GlobalPage);
         }
+
+        
     }
 }

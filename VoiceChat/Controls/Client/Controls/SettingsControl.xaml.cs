@@ -22,11 +22,10 @@ namespace ChatControls.Client.Controls
                 return cmbPlayback;
             }
         }
-
-
         public SettingsControl()
         {
             InitializeComponent();
         }
+
     }
 }

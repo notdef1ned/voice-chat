@@ -18,10 +18,15 @@ namespace Backend.Helpers
         public const string SETTINGS = "Settings";
         public const string CONNECTED = "connected";
         public const string DISCONNECTED = "disconnected";
+        public const string LOCAL = "127.0.0.1";
         #endregion
 
         #region Errors
         public const string PORT_ERROR = "Port number should be between 0 and 65535";
+        #endregion
+
+        #region Messages 
+        public static string WelcomeMessage = string.Format("{0}: ** Welcome to main chat room **\n", DateTime.Now.ToString("HH:mm:ss"));
         #endregion
 
         public class StateObject
@@ -39,6 +44,11 @@ namespace Backend.Helpers
         public static void WriteToEventLog(string message, EventLogEntryType type)
         {
             EventLog.WriteEntry(Log.ApplicationName, message, type);
+        }
+
+        public static string ChatWith(string name)
+        {
+            return string.Format("** Conversation with {0} **\n", name);
         }
     }
 

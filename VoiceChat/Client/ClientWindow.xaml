@@ -63,29 +63,7 @@
                         </ContextMenu>
                     </client:BaseTabControl.ContextMenu>
                     <client:BaseTabControl.Resources>
-                        <Style TargetType="client:ChatTabItem">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="client:ChatTabItem">
-                                        <Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="Gainsboro" CornerRadius="4,4,0,0" Margin="2,0">
-                                            <ContentPresenter x:Name="ContentSite"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        ContentSource="Header"
-                                        Margin="10,2"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter TargetName="Border" Property="Background" Value="#EDEFF0" />
-                                            </Trigger>
-                                            <Trigger Property="IsSelected" Value="False">
-                                                <Setter TargetName="Border" Property="Background" Value="GhostWhite" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
+                        
                     </client:BaseTabControl.Resources>
                 </client:BaseTabControl>
 
