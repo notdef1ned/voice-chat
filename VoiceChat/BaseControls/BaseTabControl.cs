@@ -1,6 +1,5 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
+using System.Windows.Input;
 using Backend.Helpers;
 
 namespace BaseControls
@@ -9,12 +8,12 @@ namespace BaseControls
     {
         
         #region Fields
-        private ChatTabItem settingsPage;
+        private TabItem settingsPage;
         #endregion
 
         #region Properties
         public ChatTabItem GlobalPage { get; set; }
-        public ChatTabItem SettingsPage
+        public TabItem SettingsPage
         {
             get
             {
@@ -22,7 +21,14 @@ namespace BaseControls
             }
             set
             {
-                Items.Add(value);
+                if (value != null)
+                {
+                    Items.Add(value);
+                }
+                else
+                {
+                    Items.Remove(settingsPage);
+                }
                 SelectedItem = value;
                 settingsPage = value;
             } 
@@ -35,6 +41,9 @@ namespace BaseControls
             GlobalPage.DialogBox.Text += ChatHelper.WelcomeMessage;
             Items.Add(GlobalPage);
         }
+
+
+
 
         
     }

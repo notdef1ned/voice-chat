@@ -15,7 +15,6 @@
         <Image x:Key="Send" Source="Resources/send_message.ico"/>
         <Image x:Key="Call" Source="Resources/call.ico"/>
         <Image x:Key="Restore" Source="Resources/restore.ico"/>
-
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Close" />
@@ -32,9 +31,10 @@
         <Button Content="{StaticResource Close}" Canvas.Right="10" Margin="0,5,0,0" Canvas.ZIndex="1" MinWidth="25" MinHeight="25" MaxWidth="25" MaxHeight="25"
                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                 Background="Transparent" BorderBrush="Transparent"/>
-        <Border x:Name="windowBorder" BorderBrush="#EDEFF0" BorderThickness="2" CornerRadius="6" 
+        <Border x:Name="windowBorder" BorderBrush="LightGray" BorderThickness="1"  
                         Background="#EDEFF0" Width="{Binding ActualWidth, ElementName=Canvas}"
                         Height="{Binding ActualHeight, ElementName=Canvas}">
+            
             <Grid HorizontalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" MinHeight="30"/>
@@ -49,7 +49,7 @@
                     <ColumnDefinition Width="30*" MaxWidth="100"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Name="title" TextAlignment="Center" Grid.ColumnSpan="3" Margin="0,5,0,0"/>
-                <client:BaseTabControl x:Name="tbChat" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="4" Margin="10,9,8.5,9.5" SelectionChanged="tbChat_SelectionChanged"
+                <client:BaseTabControl Padding="0" x:Name="tbChat" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="4" Margin="10,9,8.5,9.5" SelectionChanged="tbChat_SelectionChanged"
                                ContextMenuOpening="FrameworkElement_OnContextMenuOpening" ToolTipService.ShowDuration="4000" Grid.ColumnSpan="2"
                                        Grid.Column="0" Grid.Row="0" BorderBrush="Gainsboro">
                     <client:BaseTabControl.ToolTip>
@@ -63,7 +63,7 @@
                         </ContextMenu>
                     </client:BaseTabControl.ContextMenu>
                     <client:BaseTabControl.Resources>
-                        
+                        <ResourceDictionary Source="pack://application:,,,/BaseControls;component/Themes/Generic.xaml"/>
                     </client:BaseTabControl.Resources>
                 </client:BaseTabControl>
 
@@ -71,7 +71,8 @@
                                 Grid.Column="0" BorderBrush="Gainsboro" KeyDown="tbMessage_KeyDown" TextChanged="messageTextbox_TextChanged"/>
                 <Button x:Name="sendMsg" Content="{StaticResource Send}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" MaxWidth="42" MaxHeight="42" 
                         Grid.Row="4" MinWidth="42" MinHeight="42" Margin="0,1,55,9" 
-                        Click="sendMessage_Click" BorderBrush="Transparent" Background="Transparent"/>
+                        Click="sendMessage_Click" BorderBrush="Transparent" Background="Transparent">
+                </Button>
                 <Button x:Name="callBtn" Content="{StaticResource Call}" 
                         HorizontalAlignment="Right" VerticalAlignment="Center" 
                         Grid.Column="1" MaxWidth="42" MaxHeight="42" Grid.Row="4" 

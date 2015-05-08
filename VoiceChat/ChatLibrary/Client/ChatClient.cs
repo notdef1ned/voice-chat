@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -29,6 +28,7 @@ namespace Backend.Client
         
         private string udpSubscriber;
         private bool udpConnectionActive;
+        
         #endregion
 
         #region Events
@@ -47,6 +47,9 @@ namespace Backend.Client
         public bool IsConnected { get; set; }
         public int InputAudioDevice { get; set; }
         public int OutputAudioDevice { get; set; }
+        public bool DoubleClickToCall { get; set; }
+        public bool LaunchOnStartup { get; set; }
+        public string Scheme { get; set; }
 
         #endregion
 

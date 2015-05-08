@@ -1,6 +1,8 @@
-﻿namespace BaseControls
+﻿using System.Windows.Controls;
+
+namespace BaseControls
 {
-    public class SettingsControlPage : ChatTabItem
+    public class SettingsControlPage : TabItem
     {
         
     }

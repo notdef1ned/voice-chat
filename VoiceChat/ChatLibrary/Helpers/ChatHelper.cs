@@ -19,6 +19,19 @@ namespace Backend.Helpers
         public const string CONNECTED = "connected";
         public const string DISCONNECTED = "disconnected";
         public const string LOCAL = "127.0.0.1";
+        public const string VERSION = "1.0";
+        public const string APP_NAME = "VoiceChat";
+        public const string SOFTWARE = "Software";
+        #endregion
+
+        #region Registry Keys
+
+        public const string LAUNCH_ON_STARTUP = "LaunchOnStartup";
+        public const string DOUBLE_CLICK_TO_CALL = "DoubleClickToCall";
+        public const string SCHEME = "Scheme";
+        public const string DARK = "Dark";
+        public const string LIGHT = "Light";
+
         #endregion
 
         #region Errors

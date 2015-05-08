@@ -9,7 +9,7 @@
              MaxHeight="100" MaxWidth="300"
              MinHeight="100" MinWidth="300"
              d:DesignHeight="100" d:DesignWidth="300"
-                             Background="#EDEFF0">
+                             Background="Transparent">
 
     <Button x:Name="endConversation" Content="End Conversation" BorderBrush="Gainsboro" Background="#EDEFF0" HorizontalAlignment="Center" Margin="75,0,0,0" VerticalAlignment="Center" MinWidth="150" IsCancel="True"/>
     

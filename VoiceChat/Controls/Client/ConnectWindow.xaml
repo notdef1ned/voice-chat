@@ -11,7 +11,7 @@
              Background="Transparent"
              WindowStartupLocation="CenterScreen"
              Title="Connect" Width="265.5" Height="200">
-    <Border x:Name="windowBorder" BorderBrush="#EDEFF0" BorderThickness="2" CornerRadius="6" Background="#EDEFF0">
+    <Border x:Name="windowBorder" BorderBrush="LightGray" BorderThickness="0.5" CornerRadius="6" Background="#EDEFF0">
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" MinHeight="30"/>

@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Client\ChatClient.cs" />
     <Compile Include="Client\MessageEventArgs.cs" />
+    <Compile Include="Helpers\Registry.cs" />
     <Compile Include="Server\ChatServer.cs" />
     <Compile Include="Server\CustomEventArgs.cs" />
     <Compile Include="Helpers\ChatHelper.cs" />

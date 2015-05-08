@@ -9,8 +9,8 @@
              Background="Transparent" 
              WindowStyle="None"
              ResizeMode="NoResize"
-             MaxWidth="300" MinWidth="300" MaxHeight="100" MinHeight="100" d:DesignHeight="100" d:DesignWidth="300" >
-    <Border x:Name="windowBorder" BorderBrush="#EDEFF0" BorderThickness="2" CornerRadius="6" 
+             MaxWidth="300" MinWidth="300" MaxHeight="100" MinHeight="100" d:DesignHeight="100" d:DesignWidth="300" WindowStartupLocation="CenterScreen" >
+    <Border x:Name="windowBorder" BorderBrush="LightGray" BorderThickness="0.5" CornerRadius="6" 
             Background="#EDEFF0">
     <Grid x:Name="MainGrid">
     </Grid>

@@ -58,7 +58,7 @@ namespace ChatControls.Client
                 StackPanel.HorizontalAlignment = HorizontalAlignment.Center;
                 StackPanel.VerticalAlignment = VerticalAlignment.Center;
                 SubscribePanel();
-                Content = StackPanel;
+                MainGrid.Children.Add(StackPanel);
             }
         }
 

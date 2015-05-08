@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Backend.Client;
+using Backend.Helpers;
 using ChatControls.Client;
 
 namespace ClientBase
@@ -30,6 +31,9 @@ namespace ClientBase
                 Current.Shutdown();
                 return;
             }
+
+            RegistryHelper.Read(chatClient);
+
             var clientForm = new ClientWindow(chatClient);
             clientForm.Show();
         }

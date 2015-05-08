@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:baseControls="clr-namespace:BaseControls;assembly=BaseControls"
              mc:Ignorable="d" 
-             Background="#EDEFF0"
+             Background="Transparent"
                              MaxHeight="100" MinHeight="100"
                              MaxWidth="300" MinWidth="300"
              d:DesignHeight="100" d:DesignWidth="200" Orientation="Horizontal">

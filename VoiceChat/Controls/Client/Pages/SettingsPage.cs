@@ -18,18 +18,33 @@ namespace ChatControls.Client.Pages
         
         public SettingsPage(ChatClient client)
         {
-            settings = new SettingsControl();
+            settings = new SettingsControl
+            {
+                Margin = new Thickness(0),
+                Padding = new Thickness(0)
+            };
+
             Header = ChatHelper.SETTINGS;
             this.client = client;
             Content = settings;
 
-            #region Event subscription
-            settings.Playback.SelectionChanged += Playback_SelectionChanged;
-            settings.Recording.SelectionChanged += Recording_SelectionChanged;
-            Loaded += SettingsPage_Loaded;
-            KeyDown += SettingsPage_KeyDown;
+            #region Initializing Settings Page
+            settings.LaunchOnStartup.IsChecked = client.LaunchOnStartup;
+            settings.DoubleClickToCall.IsChecked = client.DoubleClickToCall;
+            settings.CmbScheme.SelectedItem = client.Scheme ?? ChatHelper.DARK;
             #endregion
 
+            #region Event subscription
+            Loaded += SettingsPage_Loaded;
+            settings.SettingsTabControl.KeyDown += SettingsPage_KeyDown;
+            settings.CmbScheme.SelectionChanged += CmbSchemeOnSelectionChanged;
+            #endregion
+
+        }
+
+        private void CmbSchemeOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        {
+            SetEdited();
         }
 
         private void SettingsPage_KeyDown(object sender, KeyEventArgs e)
@@ -45,6 +60,18 @@ namespace ChatControls.Client.Pages
         {
             client.InputAudioDevice = settings.Recording.SelectedIndex;
             client.OutputAudioDevice = settings.Playback.SelectedIndex;
+            client.Scheme = settings.CmbScheme.SelectedItem.ToString();
+
+            if (settings.DoubleClickToCall.IsChecked != null)
+                client.DoubleClickToCall = (bool) settings.DoubleClickToCall.IsChecked;
+
+            if (settings.LaunchOnStartup.IsChecked != null)
+                client.LaunchOnStartup = (bool) settings.LaunchOnStartup.IsChecked;
+
+            RegistryHelper.Write(client);
+
+            Header = ChatHelper.SETTINGS;
+            isEdited = false;
         }
 
         private void SetEdited()
@@ -77,6 +104,13 @@ namespace ChatControls.Client.Pages
             
             settings.Recording.SelectedIndex = client.InputAudioDevice;
             settings.Playback.SelectedIndex = client.OutputAudioDevice;
+
+            #region Events Subscription
+
+            settings.Playback.SelectionChanged += Playback_SelectionChanged;
+            settings.Recording.SelectionChanged += Recording_SelectionChanged;
+            
+            #endregion
         }
 
 

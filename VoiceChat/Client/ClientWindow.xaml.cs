@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -47,10 +48,13 @@ namespace ClientBase
             ChatClient.CallRequestResponded += ChatClient_CallRequestResponded;
             AllList.IsExpanded = true;
             Loaded += ClientWindow_Loaded;
+            KeyDown += tbChat_KeyDown;
             title.Text = ChatClient.Init() ? string.Format("{0} connected to {1} ({2})", ChatClient.UserName, ChatClient.ServerName,
                 ChatClient.ServerAddress) : "Disconnected";
             SetButtons();
         }
+
+        
 
         private void ClientWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -141,6 +145,14 @@ namespace ClientBase
             }
 
         }
+        
+        private void tbChat_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl) || !Keyboard.IsKeyDown(Key.W) || tbChat.SelectedItem.Equals(tbChat.GlobalPage))
+                return;
+            CloseTab();
+        }
+
         private void AddUserButton(string userName)
         {
             var userBtn = new Button
@@ -273,8 +285,9 @@ namespace ClientBase
 
         private void SetButtons()
         {
-            var isSelected = tbChat.SelectedItem != null && !Equals(tbChat.SelectedItem, tbChat.GlobalPage);
-            sendMsg.IsEnabled = !String.IsNullOrWhiteSpace(tbMessage.Text) && isSelected;
+            var isSelected = tbChat.SelectedItem != null && !Equals(tbChat.SelectedItem, tbChat.GlobalPage) 
+                && !Equals(tbChat.SelectedItem,tbChat.SettingsPage);
+            sendMsg.IsEnabled = !string.IsNullOrWhiteSpace(tbMessage.Text) && isSelected;
             callBtn.IsEnabled = isSelected;
         }
 
@@ -312,7 +325,19 @@ namespace ClientBase
 
         private void CloseTab_OnClick(object sender, RoutedEventArgs e)
         {
-            tbChat.Items.Remove(tbChat.SelectedItem);
+            CloseTab();
+        }
+
+
+        private void CloseTab()
+        {
+            var selected = tbChat.SelectedItem;
+            tbChat.Items.Remove(selected);
+
+            if (ReferenceEquals(selected, tbChat.SettingsPage))
+                tbChat.SettingsPage = null;
+
+            tbChat.SelectedItem = tbChat.GlobalPage;
         }
 
         private void FrameworkElement_OnContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -322,7 +347,6 @@ namespace ClientBase
                 closeTab.IsEnabled = true;
             else
                 closeTab.IsEnabled = false;
-
         }
 
         

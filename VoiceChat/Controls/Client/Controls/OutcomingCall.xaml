@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:baseControls="clr-namespace:BaseControls;assembly=BaseControls"
              mc:Ignorable="d" 
-             Background="#EDEFF0"
+             Background="Transparent"
              d:DesignHeight="100" d:DesignWidth="200" Orientation="Horizontal" MaxHeight="100" MinHeight="100" MaxWidth="300" MinWidth="300">
     <Button x:Name="reject" Background="#EDEFF0" BorderBrush="Gainsboro"  Content="Reject" MinWidth="150" Margin="75,40"/>
 
