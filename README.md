@@ -12,8 +12,8 @@ Simple multithreaded voice chat application (C#, WPF, NAudio)
 
 ###Server
 
-1. Shows connected TCP clients 
+1. Shows connected TCP clients
 2. Connected TCP clients management (if idles for more than 300 sec, client is automatically excluded from the registered clients list)
-3. Broadcasts system messages to clients
+3. Broadcasts system messages to connected clients
 
 
