@@ -27,25 +27,25 @@
         <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed_Minimize" />
     </Window.CommandBindings>
     <Canvas x:Name="Canvas">
-        <Button Content="{StaticResource Minimize}" Canvas.Right="60" Margin="0,5,0,0" MinWidth="25" MinHeight="25" MaxWidth="25" MaxHeight="25" 
+        <Button Content="{StaticResource Minimize}" Canvas.Right="60" Margin="0,1,0,0" MinWidth="25" MinHeight="25" MaxWidth="25" MaxHeight="25" 
                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                 Background="Transparent" BorderBrush="Transparent" Canvas.ZIndex="1"/>
-        <Button x:Name="Maximize" Content="{StaticResource Maximize}" Margin="0,5,0,0" Canvas.Right="35" Canvas.ZIndex="1" MinWidth="25" MinHeight="25" MaxWidth="25" MaxHeight="25"
+        <Button x:Name="Maximize" Content="{StaticResource Maximize}" Margin="0,1,0,0" Canvas.Right="35" Canvas.ZIndex="1" MinWidth="25" MinHeight="25" MaxWidth="25" MaxHeight="25"
                 Command="{x:Static SystemCommands.MaximizeWindowCommand}"
                 Background="Transparent" BorderBrush="Transparent"/>
-        <Button Content="{StaticResource Close}" Canvas.Right="10" Margin="0,5,0,0" Canvas.ZIndex="1" MinWidth="25" MinHeight="25" MaxWidth="25" MaxHeight="25"
+        <Button Content="{StaticResource Close}" Canvas.Right="10" Margin="0,1,0,0" Canvas.ZIndex="1" MinWidth="25" MinHeight="25" MaxWidth="25" MaxHeight="25"
                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                 Background="Transparent" BorderBrush="Transparent"/>
-        <Border x:Name="windowBorder" BorderBrush="LightGray" BorderThickness="1" CornerRadius="6"
+        <Border x:Name="windowBorder" BorderBrush="LightGray" BorderThickness="1"
                         Background="#EDEFF0" Width="{Binding ActualWidth, ElementName=Canvas}"
                         Height="{Binding ActualHeight, ElementName=Canvas}">
-
             <Grid HorizontalAlignment="Stretch">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" MinHeight="30"/>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" MinHeight="30" />
-                    <RowDefinition Height="1*" MinHeight="30" />
+                    <RowDefinition Height="Auto" MinHeight="25" />
+                    <RowDefinition Height="Auto" MinHeight="23" />
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" MinHeight="40" />
+                    <RowDefinition MinHeight="30" />
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -53,10 +53,20 @@
                     <ColumnDefinition Width="140*"/>
                     <ColumnDefinition Width="30*" MaxWidth="100"/>
                 </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0" ColumnSpan="3">
+                    <Grid.Background>
+                        <LinearGradientBrush>
+                            <LinearGradientBrush.GradientStops>
+                                <GradientStop Offset="0" Color="Black"/>
+                                <GradientStop Offset="1" Color="Black"/>
+                            </LinearGradientBrush.GradientStops>
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                </Grid>
                 <TextBlock Name="title" TextAlignment="Center" Grid.ColumnSpan="3" Margin="0,5,0,0"/>
-                <client:BaseTabControl Padding="0" x:Name="tbChat" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="4" Margin="10,9,8.5,9.5" SelectionChanged="tbChat_SelectionChanged"
+                <client:BaseTabControl Padding="0" x:Name="tbChat" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="4" Margin="10,0,8,9" SelectionChanged="tbChat_SelectionChanged"
                                ContextMenuOpening="FrameworkElement_OnContextMenuOpening" ToolTipService.ShowDuration="4000" Grid.ColumnSpan="2"
-                                       Grid.Column="0" Grid.Row="0" BorderBrush="Gainsboro">
+                                       Grid.Column="0" Grid.Row="1" BorderBrush="Gainsboro">
                     <client:BaseTabControl.ToolTip>
                         <StackPanel>
                             <TextBlock>Right click to show context menu</TextBlock>
@@ -69,30 +79,30 @@
                     </client:BaseTabControl.ContextMenu>
                 </client:BaseTabControl>
 
-                <TextBox x:Name="tbMessage" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Margin="10,0,102,9" Grid.Row="4" TextWrapping="Wrap" Height="42" Grid.ColumnSpan="2"
+                <TextBox x:Name="tbMessage" HorizontalAlignment="Stretch"  VerticalAlignment="Bottom" Margin="10,0,102,9" Grid.Row="5" TextWrapping="Wrap" Height="42" Grid.ColumnSpan="2"
                                 Grid.Column="0" BorderBrush="Gainsboro" KeyDown="tbMessage_KeyDown" TextChanged="messageTextbox_TextChanged"/>
                 <Button x:Name="sendMsg" Content="{StaticResource Send}" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="1" MaxWidth="42" MaxHeight="42" 
-                        Grid.Row="4" MinWidth="42" MinHeight="42" Margin="0,1,55,9" 
-                        Click="sendMessage_Click" BorderBrush="Transparent" Background="Transparent">
+                        Grid.Row="5" MinWidth="42" MinHeight="42" Margin="0,1,55,9" 
+                        Click="sendMessage_Click" BorderBrush="Transparent" Background="Transparent" Height="42" Width="42">
                 </Button>
                 <Button x:Name="callBtn" Content="{StaticResource Call}" 
                         HorizontalAlignment="Right" VerticalAlignment="Center" 
-                        Grid.Column="1" MaxWidth="42" MaxHeight="42" Grid.Row="4" 
-                        MinWidth="42" MinHeight="42" Margin="0,0,8,8" Click="call_Click"
-                        BorderBrush="Transparent" Background="Transparent"/>
-                <Expander x:Name="MainMenu" Header="Menu" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="1.5,9,10,0">
+                        Grid.Column="1" MaxWidth="42" MaxHeight="42" Grid.Row="5" 
+                        MinWidth="42" MinHeight="42" Margin="0,1,8,9" Click="call_Click"
+                        BorderBrush="Transparent" Background="Transparent" Height="42" Width="42"/>
+                <Expander x:Name="MainMenu" Header="Menu" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2,0,10,3">
                     <StackPanel x:Name="mainPanel">
                         <Button Margin="4" HorizontalAlignment="Left" Content="Profile" Background="Transparent" BorderBrush="Transparent" Click="ProfileClick"/>
                         <Button Margin="4" HorizontalAlignment="Left" Content="Settings" Background="Transparent" BorderBrush="Transparent" Click="SettingsClick"/>
                     </StackPanel>
 
                 </Expander>
-                <Expander Header="Friends" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="Friendlist" Margin="2,0,10,0" >
+                <Expander Header="Friends" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="Friendlist" Margin="2,0,10,0" >
                     <StackPanel x:Name="friendPanel">
                         <TextBlock Margin="4">no friends</TextBlock>
                     </StackPanel>
                 </Expander>
-                <Expander Header="All Users" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="AllList" Margin="1.5,0,10,0" >
+                <Expander Header="All Users" IsExpanded="True"  Grid.Row="4" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="AllList" Margin="2,4,10,48" Grid.RowSpan="2" >
                     <Expander.ToolTip>
                         <TextBlock Text="Click on user to start chat"/>
                     </Expander.ToolTip>

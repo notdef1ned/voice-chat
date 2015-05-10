@@ -137,25 +137,19 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\close.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\maximize.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\minimize.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\call.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\send_message.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\restore.ico" />
+    <Resource Include="chat_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="chat_icon.ico" />
+    <Resource Include="Resources\close.ico" />
+    <Resource Include="Resources\maximize.ico" />
+    <Resource Include="Resources\minimize.ico" />
+    <Resource Include="Resources\restore.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

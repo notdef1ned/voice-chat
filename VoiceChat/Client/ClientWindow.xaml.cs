@@ -45,7 +45,6 @@ namespace ClientBase
             ChatClient.MessageReceived += chatClient_MessageReceived;
             ChatClient.CallRecieved += ChatClient_CallRecieved;
             ChatClient.CallRequestResponded += ChatClient_CallRequestResponded;
-            //AllList.IsExpanded = true;
             Loaded += ClientWindow_Loaded;
             KeyDown += tbChat_KeyDown;
             title.Text = ChatClient.Init() ? string.Format("{0} connected to {1} ({2})", ChatClient.UserName, ChatClient.ServerName,
@@ -141,7 +140,7 @@ namespace ClientBase
                     allPanel.Children.Add(new TextBlock {Text = ChatHelper.NO_USERS_ONLINE});
                 else
                     foreach (var user in users)
-                        AddUserButton(user);        
+                        AddUserButton(user);
             }
 
         }
