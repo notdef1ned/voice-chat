@@ -22,6 +22,8 @@ namespace Backend.Helpers
         public const string VERSION = "1.0";
         public const string APP_NAME = "VoiceChat";
         public const string SOFTWARE = "Software";
+        public const string NO_USERS_ONLINE = "no users online";
+        public const string PROFILE = "Profile";
         #endregion
 
         #region Registry Keys

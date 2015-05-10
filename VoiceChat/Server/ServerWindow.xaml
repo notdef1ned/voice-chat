@@ -9,8 +9,8 @@
              AllowsTransparency="True"
              ResizeMode="NoResize"
              Background="Transparent"
-             MinHeight="300" MinWidth="300" Closing="ServerForm_OnClosing" Width="296.684" Height="287.293">
-    <Border x:Name="windowBorder" BorderBrush="#EDEFF0" BorderThickness="2" CornerRadius="6" Background="#EDEFF0">
+             MinHeight="300" MinWidth="300" Closing="ServerForm_OnClosing" Width="300" Height="287.293">
+    <Border x:Name="windowBorder" BorderBrush="Gainsboro" BorderThickness="1" Background="#EDEFF0">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -22,7 +22,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ListBox x:Name="connectedClients" Grid.Column="1" HorizontalAlignment="Left" Height="231" Margin="10,31,0,0" Grid.RowSpan="4" VerticalAlignment="Top" Width="130" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+        <ListBox x:Name="connectedClients" Grid.Column="1" HorizontalAlignment="Left" Height="257" Margin="10,31,0,0" Grid.RowSpan="4" VerticalAlignment="Top" Width="130" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
         <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Server Name:" VerticalAlignment="Top"/>
         <TextBox x:Name="tbServerName" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="23" Margin="10,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Text="Port Number:" VerticalAlignment="Top"/>

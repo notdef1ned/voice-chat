@@ -40,10 +40,17 @@ namespace Backend.Client
 
         #region Properties
 
+        #region Profile Info
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        #endregion
+
         public string ClientAddress { get; set; }
         public string ServerAddress { get; set; }
         public string ServerName { get; set; }
-        public string UserName { get; set; }
+        
         public bool IsConnected { get; set; }
         public int InputAudioDevice { get; set; }
         public int OutputAudioDevice { get; set; }

@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -46,7 +45,7 @@ namespace ClientBase
             ChatClient.MessageReceived += chatClient_MessageReceived;
             ChatClient.CallRecieved += ChatClient_CallRecieved;
             ChatClient.CallRequestResponded += ChatClient_CallRequestResponded;
-            AllList.IsExpanded = true;
+            //AllList.IsExpanded = true;
             Loaded += ClientWindow_Loaded;
             KeyDown += tbChat_KeyDown;
             title.Text = ChatClient.Init() ? string.Format("{0} connected to {1} ({2})", ChatClient.UserName, ChatClient.ServerName,
@@ -138,10 +137,11 @@ namespace ClientBase
                 }
                 allPanel.Children.Clear();
                 var users = userList.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var user in users)
-                {
-                    AddUserButton(user);        
-                }
+                if (!users.Any())
+                    allPanel.Children.Add(new TextBlock {Text = ChatHelper.NO_USERS_ONLINE});
+                else
+                    foreach (var user in users)
+                        AddUserButton(user);        
             }
 
         }
@@ -285,10 +285,16 @@ namespace ClientBase
 
         private void SetButtons()
         {
-            var isSelected = tbChat.SelectedItem != null && !Equals(tbChat.SelectedItem, tbChat.GlobalPage) 
-                && !Equals(tbChat.SelectedItem,tbChat.SettingsPage);
-            sendMsg.IsEnabled = !string.IsNullOrWhiteSpace(tbMessage.Text) && isSelected;
-            callBtn.IsEnabled = isSelected;
+            var isUserSelected = tbChat.SelectedItem != null && !IsServiceTab();
+            sendMsg.IsEnabled = !string.IsNullOrWhiteSpace(tbMessage.Text) && isUserSelected;
+            callBtn.IsEnabled = isUserSelected;
+        }
+
+        private bool IsServiceTab()
+        {
+            return Equals(tbChat.SelectedItem, tbChat.GlobalPage)
+                   || Equals(tbChat.SelectedItem, tbChat.SettingsPage)
+                   || Equals(tbChat.SelectedItem, tbChat.ProfilePage);
         }
 
         private void tbMessage_KeyDown(object sender, KeyEventArgs e)
@@ -336,6 +342,9 @@ namespace ClientBase
 
             if (ReferenceEquals(selected, tbChat.SettingsPage))
                 tbChat.SettingsPage = null;
+
+            if (ReferenceEquals(selected, tbChat.ProfilePage))
+                tbChat.ProfilePage = null;
 
             tbChat.SelectedItem = tbChat.GlobalPage;
         }
@@ -402,13 +411,17 @@ namespace ClientBase
         private void SettingsClick(object sender, RoutedEventArgs e)
         {
             if (tbChat.SettingsPage == null)
-            {
                 tbChat.SettingsPage = new SettingsPage(ChatClient);
-            }
             else
-            {
                 tbChat.SelectedItem = tbChat.SettingsPage;
-            }
+        }
+
+        private void ProfileClick(object sender, RoutedEventArgs e)
+        {
+            if (tbChat.ProfilePage == null)
+               tbChat.ProfilePage = new ProfilePage(ChatClient);
+            else
+               tbChat.SelectedItem = tbChat.ProfilePage;
         }
     }
 }
