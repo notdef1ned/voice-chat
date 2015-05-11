@@ -36,6 +36,7 @@ namespace Backend.Client
         public event EventHandler MessageReceived;
         public event EventHandler CallRecieved;
         public event EventHandler CallRequestResponded;
+        public event EventHandler FileRecieved;
         #endregion
 
         #region Properties
@@ -221,6 +222,9 @@ namespace Backend.Client
                 case Command.SendMessage:
                     OnMessageReceived(data.Message, data.From);
                 break;
+                case Command.SendFile:
+                    OnFileRecieved(data.File, data.From, data.Message);
+                break;
                 case Command.Broadcast:
                     OnUserListReceived(data.Message.Split('|'));
                 break;
@@ -340,6 +344,14 @@ namespace Backend.Client
             var data = new Data {Command = Command.SendMessage, To = recipient, From = UserName, Message = message};
             server.Client.Send(data.ToByte());
         }
+
+
+        public void SendFile(byte[] file, string recipient, string fileName)
+        {
+            var data = new Data {Command = Command.SendFile, File = file, Message = fileName, To = recipient, From = UserName};
+            server.Client.Send(data.ToByte());
+        }
+
         /// <summary>
         /// Call to user
         /// </summary>
@@ -420,6 +432,11 @@ namespace Backend.Client
         {
             var handler = CallRequestResponded;
             if (handler != null) handler(response, EventArgs.Empty);
+        }
+        protected virtual void OnFileRecieved(byte[] file, string from, string fileName)
+        {
+            var handler = FileRecieved;
+            if (handler != null) handler(this, new FileEventArgs(file, from, fileName));
         }
 
         #endregion

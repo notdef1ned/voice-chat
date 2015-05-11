@@ -52,9 +52,15 @@ namespace ChatControls.Client
                         StackPanel = new OutcomingCall();
                         Title = string.Format("{0}: {1}", ChatHelper.OUTCOMING_CALL, caller);
                         break;
+                    case FormType.File:
+                        StackPanel = new RecieveFile();
+                        Title = string.Format("{0}:{1}", ChatHelper.FILE_TRANSFER, caller);
+                        break;
                 }
+
                 if (StackPanel == null)
                     return;
+
                 StackPanel.HorizontalAlignment = HorizontalAlignment.Center;
                 StackPanel.VerticalAlignment = VerticalAlignment.Center;
                 SubscribePanel();
@@ -89,6 +95,7 @@ namespace ChatControls.Client
     {
         Conversation,
         Incoming,
-        Outcoming
+        Outcoming,
+        File
     }
 }

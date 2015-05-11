@@ -14,6 +14,9 @@ namespace Backend.Helpers
         public const string CONVERSATION = "Conversation";
         public const string INCOMING_CALL = "Incoming Call";
         public const string OUTCOMING_CALL = "Calling";
+        public const string FILE_TRANSFER = "File Transfer";
+        public const string TRANSFER_CANCELED = "File Transfer canceled";
+        public const string TRANSFERED = "File {0} successfully transfered";
         public const string GLOBAL = "Global";
         public const string SETTINGS = "Settings";
         public const string CONNECTED = "connected";
@@ -49,7 +52,7 @@ namespace Backend.Helpers
             // Client  socket.
             public Socket WorkSocket = null;
             // Size of receive buffer.
-            public const int BUFFER_SIZE = 65536;
+            public const int BUFFER_SIZE = 5242880;
             // Receive buffer.
             public byte[] Buffer = new byte[BUFFER_SIZE];
             // Received data string.
@@ -76,6 +79,7 @@ namespace Backend.Helpers
         public string To { get; set; }
         public string Message { get; set; }
         public string ClientAddress { get; set; }
+        public byte[] File { get; set; }
         public Command Command { get; set; }
         public Data()
         {
@@ -115,6 +119,16 @@ namespace Backend.Helpers
                 Message = Encoding.Unicode.GetString(data, next, messageLength);
                 next += messageLength;
             }
+            // Next 4 bytes store length of file
+            var fileLength = BitConverter.ToInt32(data, next) * 2;
+            next += sizeof (int);
+            if (fileLength > 0)
+            {
+                var file = new byte[fileLength];
+                Array.Copy(data, next, file, 0, fileLength);
+                File = file;
+                next += fileLength;
+            }
             // Next 4 bytes store length of the client address (UDP)
             var clientAddressLength = BitConverter.ToInt32(data, next) * 2;
             next += sizeof (int);
@@ -129,6 +143,7 @@ namespace Backend.Helpers
         /// <returns></returns>
         public byte[] ToByte()
         {
+            var zeroBytes = BitConverter.GetBytes(0);
             var result = new List<byte>();
             result.AddRange(BitConverter.GetBytes((int)Command));
             if (To != null)
@@ -136,37 +151,50 @@ namespace Backend.Helpers
                 Encode(To, result);
             }
             else
-                result.AddRange(BitConverter.GetBytes(0));
+                result.AddRange(zeroBytes);
 
             if (From != null)
             {
                 Encode(From, result);
             }
             else
-                result.AddRange(BitConverter.GetBytes(0));
+                result.AddRange(zeroBytes);
             
             if (Message != null)
             {
                 Encode(Message, result);
             }
             else
-                result.AddRange(BitConverter.GetBytes(0));
-            
+                result.AddRange(zeroBytes);
+
+            if (File != null)
+            {
+                Encode(File, result);
+            }
+            else
+                result.AddRange(zeroBytes);
+
             if (ClientAddress != null)
             {
                 Encode(ClientAddress, result);
             }
             else
-                result.AddRange(BitConverter.GetBytes(0));
+                result.AddRange(zeroBytes);
             
             return result.ToArray();
         }
 
-        private void Encode(string str, List<byte> result)
+        private static void Encode(string str, List<byte> result)
         {
             var encoded = Encoding.Unicode.GetBytes(str);
             result.AddRange(BitConverter.GetBytes(str.Length));
             result.AddRange(encoded);
+        }
+
+        private static void Encode(IReadOnlyCollection<byte> file, List<byte> result)
+        {
+            result.AddRange(BitConverter.GetBytes(file.Count));
+            result.AddRange(file);
         }
     }
 
@@ -178,6 +206,7 @@ namespace Backend.Helpers
         Broadcast,
         Disconnect,
         SendMessage,
+        SendFile,
         Call,
         AcceptCall,
         CancelCall,

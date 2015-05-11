@@ -6,9 +6,7 @@
              xmlns:baseControls="clr-namespace:BaseControls;assembly=BaseControls"
              mc:Ignorable="d" 
              Background="Transparent"
-                             MaxHeight="100" MinHeight="100"
-                             MaxWidth="300" MinWidth="300"
-             d:DesignHeight="100" d:DesignWidth="200" Orientation="Horizontal">
+             d:DesignHeight="100" d:DesignWidth="300" Orientation="Horizontal">
     
                                            
     <Button x:Name="btnAccept" Background="#EDEFF0" BorderBrush="Gainsboro" Content="Accept" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="112.5" Margin="20,0,0,0" MinWidth="112.5"/>

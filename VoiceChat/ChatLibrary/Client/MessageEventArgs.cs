@@ -5,11 +5,8 @@ namespace Backend.Client
     public class ServerEventArgs : EventArgs
     {
         public string Message { get; set; }
-
         public string ServerName { get; set; }
-
         public string Info { get; set; }
-
         public string User { get; set; }
 
         public ServerEventArgs(string changedUser, string info, string serverName)
@@ -24,5 +21,19 @@ namespace Backend.Client
             Message = msg;
         }
 
+    }
+
+    public class FileEventArgs : EventArgs
+    {
+        public byte[] File { get; set; }
+        public string FileName { get; set; }
+        public string From { get; set; }
+
+        public FileEventArgs(byte[] file, string from, string fileName)
+        {
+            File = file;
+            From = from;
+            FileName = fileName;
+        }
     }
 }

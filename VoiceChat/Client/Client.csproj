@@ -57,6 +57,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -137,12 +140,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\call.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\send_message.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="chat_icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +147,11 @@
     <Resource Include="Resources\maximize.ico" />
     <Resource Include="Resources\minimize.ico" />
     <Resource Include="Resources\restore.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\call.ico" />
+    <Resource Include="Resources\send_file.ico" />
+    <Resource Include="Resources\send_message.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

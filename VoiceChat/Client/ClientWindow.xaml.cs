@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +12,7 @@ using Backend.Helpers;
 using BaseControls;
 using ChatControls.Client;
 using ChatControls.Client.Pages;
+using Microsoft.Win32;
 
 namespace ClientBase
 {
@@ -37,19 +39,60 @@ namespace ClientBase
         private delegate void EndConversation();
 
         public ChatClient ChatClient { get; set; }
+        public string Recipient { get; set; }
+
         public ClientWindow(ChatClient client)
         {
             InitializeComponent();
             ChatClient = client;
             ChatClient.UserListReceived += chatClient_UserListReceived;
             ChatClient.MessageReceived += chatClient_MessageReceived;
+            ChatClient.FileRecieved += ChatClient_FileRecieved;
             ChatClient.CallRecieved += ChatClient_CallRecieved;
             ChatClient.CallRequestResponded += ChatClient_CallRequestResponded;
+            tbChat.SelectionChanged +=tbChat_SelectionChanged;
             Loaded += ClientWindow_Loaded;
             KeyDown += tbChat_KeyDown;
             title.Text = ChatClient.Init() ? string.Format("{0} connected to {1} ({2})", ChatClient.UserName, ChatClient.ServerName,
                 ChatClient.ServerAddress) : "Disconnected";
             SetButtons();
+        }
+
+        private void ChatClient_FileRecieved(object sender, EventArgs e)
+        {
+            if (!Dispatcher.CheckAccess())
+            {
+                RecieveMessage r = ChatClient_FileRecieved;
+                Dispatcher.Invoke(r, sender, e);
+            }
+            else
+            {
+                var args = (FileEventArgs) e;
+
+                var page = FindTabPage(args.From) ?? AddTabPage(args.From);
+                var time = DateTime.Now.ToString("HH:mm:ss");
+
+                var window = new CallForm(args.From, FormType.File);
+                var result = window.ShowDialog();
+                string strResult;
+               
+                if (result == true)
+                {
+                    strResult = string.Format(ChatHelper.TRANSFERED,args.FileName);
+
+                    var saveDialog = new SaveFileDialog {FileName = args.FileName};
+                    if (saveDialog.ShowDialog(this) == true)
+                    {
+                        File.WriteAllBytes(saveDialog.FileName, args.File);
+                    }
+                }
+                else
+                {
+                    strResult = ChatHelper.TRANSFER_CANCELED;  
+                }
+                page.DialogBox.AppendText(string.Format("[{0}] {1}", time, strResult));
+                page.DialogBox.AppendText(Environment.NewLine);
+            }
         }
 
         
@@ -83,12 +126,11 @@ namespace ClientBase
             }
             else
             {
-                var user = (string)sender;
                 var args = e as ServerEventArgs;
                 if (args == null)
                     return;
 
-                var page = FindTabPage(user) ?? AddTabPage(user);
+                var page = FindTabPage((string) sender) ?? AddTabPage((string) sender);
                 var time = DateTime.Now.ToString("HH:mm:ss");
 
                 page.DialogBox.AppendText(string.Format("[{0}] {1}", time, args.Message));
@@ -286,7 +328,8 @@ namespace ClientBase
         {
             var isUserSelected = tbChat.SelectedItem != null && !IsServiceTab();
             sendMsg.IsEnabled = !string.IsNullOrWhiteSpace(tbMessage.Text) && isUserSelected;
-            callBtn.IsEnabled = isUserSelected;
+            callBtn.IsEnabled = fileBtn.IsEnabled = isUserSelected;
+            callBtn.Visibility = fileBtn.Visibility = isUserSelected ? Visibility.Visible : Visibility.Hidden;
         }
 
         private bool IsServiceTab()
@@ -320,6 +363,8 @@ namespace ClientBase
 
         private void tbChat_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var tabItem = (TabItem) tbChat.SelectedItem;
+            Recipient = tabItem != null ? (string) tabItem.Header : null;
             SetButtons();
         }
 
@@ -421,6 +466,17 @@ namespace ClientBase
                tbChat.ProfilePage = new ProfilePage(ChatClient);
             else
                tbChat.SelectedItem = tbChat.ProfilePage;
+            SetButtons();
+        }
+
+        private void FileTransferClick(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog {Multiselect = false};
+            var userClickOk = openFileDialog.ShowDialog();
+            if (userClickOk != true) 
+                return;
+            var file = File.ReadAllBytes(openFileDialog.FileName);
+            ChatClient.SendFile(file,Recipient,openFileDialog.SafeFileName);
         }
     }
 }

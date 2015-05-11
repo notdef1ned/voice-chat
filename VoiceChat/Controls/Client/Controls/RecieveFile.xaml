@@ -1,12 +1,12 @@
-﻿<baseControls:ChatStackPanel x:Class="ChatControls.Client.Controls.OutcomingCall"
+﻿<baseControls:ChatStackPanel x:Class="ChatControls.Client.Controls.RecieveFile"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:baseControls="clr-namespace:BaseControls;assembly=BaseControls"
              mc:Ignorable="d" 
-             Background="Transparent"
              d:DesignHeight="100" d:DesignWidth="300" Orientation="Horizontal">
-    <Button x:Name="reject" Background="#EDEFF0" BorderBrush="Gainsboro"  Content="Reject" MinWidth="150" Margin="75,40"/>
-
+    <Button x:Name="btnAccept" Background="#EDEFF0" BorderBrush="Gainsboro" Content="Recieve" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="112.5" Margin="20,0,0,0" MinWidth="112.5"/>
+    <Button x:Name="btnDecline" Background="#EDEFF0" BorderBrush="Gainsboro" Content="Cancel" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="30,0,0,0" MaxWidth="112.5" MinWidth="112.5"/>
+    
 </baseControls:ChatStackPanel>
