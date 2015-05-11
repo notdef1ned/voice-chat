@@ -8,7 +8,7 @@ Simple multithreaded voice chat application (C#, WPF, NAudio)
 
 1. Sending message to selected user
 2. Voice calls (UDP)
-3. File transfer (coming soon)
+3. File transfer
 
 ###Server
 
