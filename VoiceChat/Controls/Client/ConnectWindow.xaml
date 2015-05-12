@@ -32,10 +32,10 @@
             <TextBox x:Name="tbPort" MaxHeight="20" MinHeight="20" Grid.Row="2" Grid.Column="1" TextChanged="tbPort_TextChanged" Margin="10,0,10,0"/>
             <TextBlock Grid.Row="3" Text="UserName:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,10,0,10" />
             <TextBox x:Name="tbUser" MaxHeight="20" MinHeight="20" Grid.Row="3" Grid.Column="1" TextChanged="tbName_TextChanged" Margin="10,0,10,0"/>
-            <CheckBox x:Name="cbIsLocal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="4" Checked="CbIsLocal_OnChecked" Unchecked="CbIsLocal_OnUnchecked"> Local server</CheckBox>
-            <Button x:Name="btnOk" Grid.ColumnSpan="2" Grid.Column="0" Content="OK" HorizontalAlignment="Left" VerticalAlignment="Center" Width="76" Margin="41,7,0,23" Grid.Row="5" Click="Button_Click"
-                BorderBrush="Gainsboro" Background="#EDEFF0" Height="20"/>
-            <Button x:Name="btnCancel" BorderBrush="Gainsboro" Background="#EDEFF0" Content="Cancel" Grid.Column="1"  HorizontalAlignment="Left" Margin="32,8,0,22" IsCancel="True" Grid.Row="5" VerticalAlignment="Center" Width="76" Click="Button_Click_1" Height="20"/>
+            <CheckBox x:Name="cbIsLocal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="4" Checked="CbIsLocal_OnChecked" Unchecked="CbIsLocal_OnUnchecked">Local server</CheckBox>
+            <baseControls:ChatButton x:Name="btnOk" Grid.ColumnSpan="2" Grid.Column="0" Content="OK" HorizontalAlignment="Left" VerticalAlignment="Center" Width="76" Margin="41,6,0,24" Grid.Row="5" Click="Button_Click" 
+                BorderBrush="Gainsboro" Background="#EDEFF0"/>
+            <baseControls:ChatButton x:Name="btnCancel" BorderBrush="Gainsboro" Background="#EDEFF0" Content="Cancel" Grid.Column="1"  HorizontalAlignment="Left" Margin="34,6,0,24" IsCancel="True" Grid.Row="5" VerticalAlignment="Center" Width="76" Click="Button_Click_1" Height="20"/>
         </Grid>
     </Border>
     <baseControls:ChatWindow.Triggers>

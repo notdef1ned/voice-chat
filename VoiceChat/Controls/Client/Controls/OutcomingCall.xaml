@@ -7,6 +7,6 @@
              mc:Ignorable="d" 
              Background="Transparent"
              d:DesignHeight="100" d:DesignWidth="300" Orientation="Horizontal">
-    <Button x:Name="reject" Background="#EDEFF0" BorderBrush="Gainsboro"  Content="Reject" MinWidth="150" Margin="75,40"/>
+    <baseControls:ChatButton x:Name="reject" Background="#EDEFF0" BorderBrush="Gainsboro"  Content="Reject" MinWidth="150" Margin="75,40"/>
 
 </baseControls:ChatStackPanel>

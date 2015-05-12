@@ -107,7 +107,7 @@
                         <TextBlock Margin="4">no friends</TextBlock>
                     </StackPanel>
                 </Expander>
-                <Expander Header="All Users" Grid.Row="4" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="AllList" Margin="2,4,10,48" Grid.RowSpan="2" >
+                <Expander Header="All Users" IsExpanded="True"  Grid.Row="4" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="AllList" Margin="2,4,10,48" Grid.RowSpan="2" >
                     <Expander.ToolTip>
                         <TextBlock Text="Click on user to start chat"/>
                     </Expander.ToolTip>
@@ -115,7 +115,6 @@
                         <TextBlock Margin ="4">no users online</TextBlock>
                     </StackPanel>
                 </Expander>
-
             </Grid>
         </Border>
     </Canvas>

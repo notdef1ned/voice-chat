@@ -67,6 +67,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChatButton.cs" />
     <Compile Include="ChatStackPanel.cs" />
     <Compile Include="BaseTabControl.cs" />
     <Compile Include="ChatTabPage.cs" />
