@@ -12,9 +12,9 @@ namespace Backend.Helpers
         #region Titles
 
         public const string CONVERSATION = "Conversation";
-        public const string INCOMING_CALL = "Incoming Call";
-        public const string OUTCOMING_CALL = "Calling";
-        public const string FILE_TRANSFER = "File Transfer";
+        public const string INCOMING_CALL = "Incoming call from";
+        public const string OUTCOMING_CALL = "Calling to";
+        public const string FILE_TRANSFER = "Recieve file from {0}?";
         public const string TRANSFER_CANCELED = "File Transfer canceled";
         public const string TRANSFERED = "File {0} successfully transfered";
         public const string GLOBAL = "Global";
@@ -44,7 +44,7 @@ namespace Backend.Helpers
         #endregion
 
         #region Messages 
-        public static string WelcomeMessage = string.Format("{0}: ** Welcome to main chat room **\n", DateTime.Now.ToString("HH:mm:ss"));
+        public static string WelcomeMessage = string.Format("{0}: ** Welcome to main chat room, Click on any user to start chat**\n", DateTime.Now.ToString("HH:mm:ss"));
         #endregion
 
         public class StateObject

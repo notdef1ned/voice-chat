@@ -10,6 +10,13 @@
              ResizeMode="NoResize"
              Background="Transparent"
              MinHeight="300" MinWidth="300" Closing="ServerForm_OnClosing" Width="300" Height="287.293">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/BaseControls;component/Themes/Generic.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Border x:Name="windowBorder" BorderBrush="Gainsboro" BorderThickness="1" Background="#EDEFF0">
     <Grid>
         <Grid.RowDefinitions>
@@ -23,16 +30,16 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <ListBox x:Name="connectedClients" Grid.Column="1" HorizontalAlignment="Left" Height="257" Margin="10,31,0,0" Grid.RowSpan="4" VerticalAlignment="Top" Width="130" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
-        <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Server Name:" VerticalAlignment="Top"/>
-        <TextBox x:Name="tbServerName" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="23" Margin="10,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Text="Port Number:" VerticalAlignment="Top"/>
-        <TextBox x:Name="tbPortNumber" HorizontalAlignment="Left" Height="23" Margin="10,31,0,0" Grid.Row="1" Grid.Column="0"
+        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="10,10,0,0" Content="Server Name:" VerticalAlignment="Top"/>
+        <baseControls:ChatTextBox x:Name="tbServerName" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Height="23" Margin="10,31,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Label HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" Grid.Column="0" Content="Port Number:" VerticalAlignment="Top"/>
+        <baseControls:ChatTextBox x:Name="tbPortNumber" HorizontalAlignment="Left" Height="23" Margin="10,31,0,0" Grid.Row="1" Grid.Column="0"
                  TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Text="Network Interface:" VerticalAlignment="Top"/>
+        <Label HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" Content="Network Interface:" VerticalAlignment="Top"/>
         <ComboBox x:Name="cbInterfaces" HorizontalAlignment="Left" Margin="10,31,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Width="120"/>
-        <CheckBox x:Name="cbStartStop" HorizontalAlignment="Left"  Content="Start" Margin="10,10,0,0" Grid.Row="3" Grid.Column="0"
+        <baseControls:ChatCheckBox x:Name="cbStartStop" HorizontalAlignment="Left"  Content="Start" Margin="10,10,0,0" Grid.Row="3" Grid.Column="0"
                   VerticalAlignment="Top" Checked="cbStartStop_Checked" Unchecked="cbStartStop_Checked"/>
-        <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="10.5,10,0,0" TextWrapping="Wrap" Text="Connected Users:" VerticalAlignment="Top"/>
+        <Label Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Margin="10.5,10,0,0" Content="Connected Users:" VerticalAlignment="Top"/>
 
     </Grid>
        </Border>

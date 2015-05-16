@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using Backend.Helpers;
 using BaseControls;
 using ChatControls.Client.Controls;
@@ -41,30 +42,29 @@ namespace ChatControls.Client
                 switch (type)
                 {
                     case FormType.Conversation:
+                        MainGrid.Children.Remove(StackPanel);
                         StackPanel = new Conversation();
-                        Title = string.Format("{0}: {1}", ChatHelper.CONVERSATION, caller);
+                        Info.Text = string.Format("{0}: {1}", ChatHelper.CONVERSATION, caller);
                         break;
                     case FormType.Incoming:
                         StackPanel = new IncomingCall();
-                        Title = string.Format("{0}: {1}", ChatHelper.INCOMING_CALL, caller);
+                        Info.Text = string.Format("{0}: {1}", ChatHelper.INCOMING_CALL, caller);
                         break;
                     case FormType.Outcoming:
                         StackPanel = new OutcomingCall();
-                        Title = string.Format("{0}: {1}", ChatHelper.OUTCOMING_CALL, caller);
+                        Info.Text = string.Format("{0}: {1}", ChatHelper.OUTCOMING_CALL, caller);
                         break;
                     case FormType.File:
                         StackPanel = new RecieveFile();
-                        Title = string.Format("{0}:{1}", ChatHelper.FILE_TRANSFER, caller);
+                        Info.Text = string.Format(ChatHelper.FILE_TRANSFER, caller);
                         break;
                 }
 
                 if (StackPanel == null)
                     return;
-
-                StackPanel.HorizontalAlignment = HorizontalAlignment.Center;
-                StackPanel.VerticalAlignment = VerticalAlignment.Center;
+                
                 SubscribePanel();
-                MainGrid.Children.Add(StackPanel);
+                SetControl();
             }
         }
 
@@ -77,6 +77,19 @@ namespace ChatControls.Client
                 StackPanel.AcceptButton.Click += AcceptButton_Click;
             if (StackPanel.CancelButton != null)
                 StackPanel.CancelButton.Click += CancelButton_Click;
+        }
+
+        /// <summary>
+        /// Sets window control
+        /// </summary>
+        private void SetControl()
+        {
+            StackPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            StackPanel.VerticalAlignment = VerticalAlignment.Center;
+            Grid.SetRow(StackPanel, 1);
+            Grid.SetColumn(StackPanel, 0);
+            Grid.SetColumnSpan(StackPanel, 2);
+            MainGrid.Children.Add(StackPanel);
         }
 
         void CancelButton_Click(object sender, RoutedEventArgs e)

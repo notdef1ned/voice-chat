@@ -12,7 +12,16 @@
              MaxWidth="300" MinWidth="300" MaxHeight="100" MinHeight="100" d:DesignHeight="100" d:DesignWidth="300" WindowStartupLocation="CenterScreen" >
     <Border x:Name="windowBorder" BorderBrush="LightGray" BorderThickness="0.5" CornerRadius="6" 
             Background="#EDEFF0">
-    <Grid x:Name="MainGrid">
-    </Grid>
+        <Grid x:Name="MainGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="Info" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Stretch" Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="0"/>
+        </Grid>
     </Border>
 </baseControls:ChatWindow>

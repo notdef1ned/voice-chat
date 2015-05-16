@@ -27,5 +27,6 @@ namespace ChatControls.Client.Controls
             AcceptButton = btnAccept;
             CancelButton = btnDecline;
         }
+
     }
 }

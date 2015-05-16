@@ -11,7 +11,15 @@
              Background="Transparent"
              WindowStartupLocation="CenterScreen"
              Title="Connect" Width="265.5" Height="200">
-    <Border x:Name="windowBorder" BorderBrush="LightGray" BorderThickness="1"  Background="#EDEFF0">
+    <Border x:Name="windowBorder" BorderThickness="1"  Background="#EDEFF0" CornerRadius="6">
+        <Border.BorderBrush>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#888A87" Offset="0"/>
+                <GradientStop Color="#777875" Offset="0.375"/>
+                <GradientStop Color="#50524F" Offset="0.375"/>
+                <GradientStop Color="#323332" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.BorderBrush>
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" MinHeight="30"/>
@@ -27,12 +35,12 @@
             </Grid.ColumnDefinitions>
             <TextBlock TextAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.ColumnSpan="2">Login</TextBlock>
             <TextBlock Grid.Row="1" Text="Host IP Address:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,4,0,10"/>
-            <TextBox x:Name="tbHost" MaxHeight="20" MinHeight="20"  VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" TextChanged="tbHost_TextChanged" Margin="10,0,10,0"/>
+            <baseControls:ChatTextBox x:Name="tbHost" MaxHeight="20" MinHeight="20"  VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" TextChanged="tbHost_TextChanged" Margin="10,0,10,0"/>
             <TextBlock Grid.Row="2" Text="Port:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,10,0,10" TextAlignment="Right"/>
-            <TextBox x:Name="tbPort" MaxHeight="20" MinHeight="20" Grid.Row="2" Grid.Column="1" TextChanged="tbPort_TextChanged" Margin="10,0,10,0"/>
+            <baseControls:ChatTextBox x:Name="tbPort" MaxHeight="20" MinHeight="20" Grid.Row="2" Grid.Column="1" TextChanged="tbPort_TextChanged" Margin="10,0,10,0"/>
             <TextBlock Grid.Row="3" Text="UserName:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,10,0,10" />
-            <TextBox x:Name="tbUser" MaxHeight="20" MinHeight="20" Grid.Row="3" Grid.Column="1" TextChanged="tbName_TextChanged" Margin="10,0,10,0"/>
-            <CheckBox x:Name="cbIsLocal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="4" Checked="CbIsLocal_OnChecked" Unchecked="CbIsLocal_OnUnchecked">Local server</CheckBox>
+            <baseControls:ChatTextBox x:Name="tbUser" MaxHeight="20" MinHeight="20" Grid.Row="3" Grid.Column="1" TextChanged="tbName_TextChanged" Margin="10,0,10,0"/>
+            <baseControls:ChatCheckBox x:Name="cbIsLocal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="4" Checked="CbIsLocal_OnChecked" Unchecked="CbIsLocal_OnUnchecked">Local server</baseControls:ChatCheckBox>
             <baseControls:ChatButton x:Name="btnOk" Grid.ColumnSpan="2" Grid.Column="0" Content="OK" HorizontalAlignment="Left" VerticalAlignment="Center" Width="76" Margin="41,6,0,24" Grid.Row="5" Click="Button_Click" 
                 BorderBrush="Gainsboro" Background="#EDEFF0"/>
             <baseControls:ChatButton x:Name="btnCancel" BorderBrush="Gainsboro" Background="#EDEFF0" Content="Cancel" Grid.Column="1"  HorizontalAlignment="Left" Margin="34,6,0,24" IsCancel="True" Grid.Row="5" VerticalAlignment="Center" Width="76" Click="Button_Click_1" Height="20"/>

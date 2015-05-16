@@ -329,7 +329,7 @@ namespace ClientBase
             var isUserSelected = tbChat.SelectedItem != null && !IsServiceTab();
             sendMsg.IsEnabled = !string.IsNullOrWhiteSpace(tbMessage.Text) && isUserSelected;
             callBtn.IsEnabled = fileBtn.IsEnabled = isUserSelected;
-            callBtn.Visibility = fileBtn.Visibility = isUserSelected ? Visibility.Visible : Visibility.Hidden;
+            tbMessage.Visibility = sendMsg.Visibility = callBtn.Visibility = fileBtn.Visibility = isUserSelected ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private bool IsServiceTab()

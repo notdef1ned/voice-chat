@@ -15,6 +15,12 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                <GroupBox Margin="10" Header="Interface">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
@@ -25,11 +31,23 @@
                     <ComboBox  x:Name="CmbScheme" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10">
                     </ComboBox>
                     <TextBlock  Text="Color Scheme" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" TextWrapping="Wrap" Margin="10"/>
-                    <CheckBox x:Name="CmbLaunchOnStartup" Grid.Row ="1" Grid.Column="0" Content="Launch on Windows startup" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center"/>
-                    <CheckBox x:Name="CmbDoubleClickToCall" Grid.Row ="2" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Double Click to call" Margin="10"/>
+                    
                 </Grid>
+                </GroupBox>
+                    <GroupBox Grid.Row="1" Margin="10" Header="Other">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <CheckBox x:Name="CmbLaunchOnStartup" Grid.Row ="0" Grid.Column="0" Content="Launch on Windows startup" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center"/>
+                            <CheckBox x:Name="CmbDoubleClickToCall" Grid.Row ="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Double Click to call" Margin="10"/>
+                        </Grid>
+                    </GroupBox>
+              </Grid>
             </baseControls:SettingsControlPage>
             <baseControls:SettingsControlPage Header="Audio">
+                <GroupBox Header="Devices" Margin="10">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -44,7 +62,7 @@
                     <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center">Playback device</TextBlock>
                     <ComboBox x:Name="cmbPlayback" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" Margin="10" VerticalAlignment="Center" />
                 </Grid>
-                
+               </GroupBox>
             </baseControls:SettingsControlPage>
             <baseControls:SettingsControlPage Header="Misc">
                 <Grid>

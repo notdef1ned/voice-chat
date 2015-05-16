@@ -68,9 +68,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatButton.cs" />
+    <Compile Include="ChatCheckBox.cs" />
     <Compile Include="ChatStackPanel.cs" />
     <Compile Include="BaseTabControl.cs" />
     <Compile Include="ChatTabPage.cs" />
+    <Compile Include="ChatTextBox.cs" />
     <Compile Include="ChatWindow.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
