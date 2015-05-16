@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define ProductName="Voice Chat" ?>
+  <?define ProductVersion="1.0.0.0" ?>
+  <?define ProductCode="4A4C3B88-1EE3-4B6B-B5CF-50E22A4675FE"?>
+  <?define UpgradeCode="542f7a5a-0356-4c7b-b9f6-a4e907da0098"?>
+  <?define Manufacturer="Ilya Chukhlomin"?>
+  
+	<Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+    
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLLOCATION" Name="$(var.ProductName)" >
+          <Component Id="ProductComponent" Guid="ED1EDA03-9B82-4413-AE6D-AF4A390B21E3">
+            <File Id='Client.exe' DiskId='1' Source="Client.exe" KeyPath="yes" Checksum="yes"/>
+          </Component>
+          <Component Id="Backend" Guid="8C60152B-1026-4466-B705-80C4D6028DDA">
+            <File Id='Backend.dll' DiskId='1' Source="Backend.dll" KeyPath="yes" Checksum="yes"/>
+          </Component>
+          <Component Id="BaseControls" Guid="72726675-80DB-49E1-AEFD-5506E4ECAF13">
+            <File Id='BaseControls.dll' DiskId='1' Source="BaseControls.dll" KeyPath="yes" Checksum="yes"/>
+          </Component>
+          <Component Id="Controls" Guid="2893BAD7-1BB6-43CF-B4AB-F8326D0BB8A6">
+            <File Id='Controls.dll' DiskId='1' Source="Controls.dll" KeyPath="yes" Checksum="yes"/>
+          </Component>
+          <Component Id="NAudio" Guid="FCE770B9-1F3E-4532-B6FB-80BDF15D7C75">
+            <File Id="NAudio.dll" DiskId="1" Source="NAudio.dll" KeyPath="yes" Checksum="yes"/>
+          </Component>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)">
+          <Component Id="ApplicationShortcutCalc" Guid="4CEBD68F-E933-47f9-B02C-A4FC69FDB551">
+            <Shortcut Id="VCShortcut"
+                 Name="VChat"
+                 Description="$(var.ProductName)"
+                 Target="[INSTALLLOCATION]Client.exe"
+                 WorkingDirectory="INSTALLLOCATION"/>
+            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+            <RegistryValue Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.ProductName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+          </Component>
+      </Directory>
+    </Directory>
+    </Directory>
+
+    <Feature Id="ProductFeature" Title="Voice Chat Installation" Level="1">
+      <ComponentRef Id="ProductComponent" />
+      <ComponentRef Id="Backend" />
+      <ComponentRef Id="BaseControls" />
+      <ComponentRef Id="Controls" />
+      <ComponentRef Id="NAudio" />
+      <ComponentRef Id="ApplicationShortcutCalc" />
+    </Feature>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" ></Property>
+    <WixVariable Id="WixUILicenseRtf" Overridable="yes" Value="License.rtf"/>
+    <UIRef Id="WixUI_InstallDir"/>
+
+</Product>
+
+	
+</Wix>
