@@ -1,7 +1,8 @@
 #Voice Chat
-Simple multithreaded voice chat application (C#, WPF, NAudio)
 
+Simple multithreaded voice chat application (C#, WPF, NAudio)
 15.05.2015: Pre-release is now availlable
+
 
 ##Features:
 
