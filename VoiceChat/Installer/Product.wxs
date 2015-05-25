@@ -7,7 +7,7 @@
   <?define Manufacturer="Ilya Chukhlomin"?>
   
 	<Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Manufacturer="$(var.Manufacturer)" />
 
     <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
     

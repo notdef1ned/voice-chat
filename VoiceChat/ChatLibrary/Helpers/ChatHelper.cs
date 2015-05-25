@@ -120,7 +120,7 @@ namespace Backend.Helpers
                 next += messageLength;
             }
             // Next 4 bytes store length of file
-            var fileLength = BitConverter.ToInt32(data, next) * 2;
+            var fileLength = BitConverter.ToInt32(data, next);
             next += sizeof (int);
             if (fileLength > 0)
             {

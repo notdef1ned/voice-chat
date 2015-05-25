@@ -28,7 +28,7 @@ namespace Backend.Client
         
         private string udpSubscriber;
         private bool udpConnectionActive;
-        
+
         #endregion
 
         #region Events
@@ -125,7 +125,7 @@ namespace Backend.Client
             waveProvider = new BufferedWaveProvider(new WaveFormat(8000, 16, WaveIn.GetCapabilities(OutputAudioDevice).Channels));
             recievedStream = new WaveOut();
             recievedStream.Init(waveProvider);
-
+            
             tcpRecieveThread = new Thread(RecieveFromServer) {Priority = ThreadPriority.Normal};
             tcpRecieveThread.Start();
             
@@ -138,10 +138,17 @@ namespace Backend.Client
             {
                 WorkSocket = server.Client
             };
-
-            server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BUFFER_SIZE, 0,
-                OnReceive, state);
+            while (IsConnected)
+            {
+                if (IsReceivingData) 
+                    continue;
+                IsReceivingData = true;
+                server.Client.BeginReceive(state.Buffer, 0, ChatHelper.StateObject.BUFFER_SIZE, 0,
+                    OnReceive, state);
+            }
         }
+
+        public bool IsReceivingData { get; set; }
 
         private bool ReceiveUsersList()
         {
@@ -183,6 +190,7 @@ namespace Backend.Client
             }
             catch (SocketException)
             {
+                IsConnected = false;
                 server.Client.Disconnect(true);
             }
         }
@@ -378,6 +386,7 @@ namespace Backend.Client
         public void CloseConnection()
         {
             IsConnected = false;
+
             var data = new Data {Command = Command.Disconnect};
             if (server.Client.Connected)
                 server.Client.Send(data.ToByte());
