@@ -250,6 +250,16 @@ namespace Backend.Client
                 break;
             }
         }
+
+        /// <summary>
+        /// Parses file extension
+        /// </summary>
+        /// <param name="fileName">Full filename</param>
+        private string ParseFileExtension(string fileName)
+        {
+            return System.IO.Path.GetExtension(fileName);
+        }
+
         /// <summary>
         /// Parse call response
         /// </summary>
@@ -428,24 +438,28 @@ namespace Backend.Client
         protected virtual void OnMessageReceived(string message, string sender)
         {
             var handler = MessageReceived;
-            if (handler != null) handler(sender, new ServerEventArgs(message));
+            if (handler != null) 
+                handler(sender, new ServerEventArgs(message));
         }
 
         protected virtual void OnCallRecieved(string caller, string address)
         {
             var handler = CallRecieved;
-            if (handler != null) handler(address, new ServerEventArgs(caller));
+            if (handler != null) 
+                handler(address, new ServerEventArgs(caller));
         }
 
         protected virtual void OnCallResponseReceived(Command response)
         {
             var handler = CallRequestResponded;
-            if (handler != null) handler(response, EventArgs.Empty);
+            if (handler != null) 
+                handler(response, EventArgs.Empty);
         }
         protected virtual void OnFileRecieved(byte[] file, string from, string fileName)
         {
             var handler = FileRecieved;
-            if (handler != null) handler(this, new FileEventArgs(file, from, fileName));
+            if (handler != null) 
+                handler(this, new FileEventArgs(file, from, fileName,ParseFileExtension(fileName)));
         }
 
         #endregion

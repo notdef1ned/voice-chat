@@ -28,12 +28,14 @@ namespace Backend.Client
         public byte[] File { get; set; }
         public string FileName { get; set; }
         public string From { get; set; }
+        public string Extenstion { get; set; }
 
-        public FileEventArgs(byte[] file, string from, string fileName)
+        public FileEventArgs(byte[] file, string from, string fileName, string extension)
         {
             File = file;
             From = from;
             FileName = fileName;
+            Extenstion = extension;
         }
     }
 }

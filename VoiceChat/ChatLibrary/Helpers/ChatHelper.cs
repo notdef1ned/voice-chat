@@ -27,6 +27,7 @@ namespace Backend.Helpers
         public const string SOFTWARE = "Software";
         public const string NO_USERS_ONLINE = "no users online";
         public const string PROFILE = "Profile";
+        public const string FILE_FILTER_ALL = "All files (*.*)|*.*";
         #endregion
 
         #region Registry Keys

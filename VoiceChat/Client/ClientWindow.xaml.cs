@@ -80,7 +80,14 @@ namespace ClientBase
                 {
                     strResult = string.Format(ChatHelper.TRANSFERED,args.FileName);
 
-                    var saveDialog = new SaveFileDialog {FileName = args.FileName};
+                    var saveDialog = new SaveFileDialog 
+                    {
+                        FileName = args.FileName,
+                        AddExtension = true,
+                        DefaultExt = args.Extenstion,
+                        Filter = ChatHelper.FILE_FILTER_ALL
+                    };
+
                     if (saveDialog.ShowDialog(this) == true)
                     {
                         File.WriteAllBytes(saveDialog.FileName, args.File);
