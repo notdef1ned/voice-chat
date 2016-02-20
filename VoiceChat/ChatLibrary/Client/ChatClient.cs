@@ -108,7 +108,7 @@ namespace Backend.Client
                 return null;
             var random = new Random();
             var endPoint = new IPEndPoint(ipAddress,random.Next(65000,65536));
-            ClientAddress = string.Format("{0}:{1}",endPoint.Address,endPoint.Port);
+            ClientAddress = $"{endPoint.Address}:{endPoint.Port}";
             return endPoint;
         }
 
@@ -160,7 +160,7 @@ namespace Backend.Client
 
             if (data.Command == Command.NameExist)
             {
-                MessageBox.Show(string.Format("Name \"{0}\" already exist on server", serverMessage[1]));
+                MessageBox.Show($"Name \"{serverMessage[1]}\" already exist on server");
                 return false;
             }
 
@@ -431,35 +431,30 @@ namespace Backend.Client
         protected virtual void OnUserListReceived(string[] serverMessage)
         {
             var handler = UserListReceived;
-            if (handler != null)
-                handler(serverMessage[0], new ServerEventArgs(serverMessage[1], serverMessage[2], serverMessage[3]));
+            handler?.Invoke(serverMessage[0], new ServerEventArgs(serverMessage[1], serverMessage[2], serverMessage[3]));
         }
 
         protected virtual void OnMessageReceived(string message, string sender)
         {
             var handler = MessageReceived;
-            if (handler != null) 
-                handler(sender, new ServerEventArgs(message));
+            handler?.Invoke(sender, new ServerEventArgs(message));
         }
 
         protected virtual void OnCallRecieved(string caller, string address)
         {
             var handler = CallRecieved;
-            if (handler != null) 
-                handler(address, new ServerEventArgs(caller));
+            handler?.Invoke(address, new ServerEventArgs(caller));
         }
 
         protected virtual void OnCallResponseReceived(Command response)
         {
             var handler = CallRequestResponded;
-            if (handler != null) 
-                handler(response, EventArgs.Empty);
+            handler?.Invoke(response, EventArgs.Empty);
         }
         protected virtual void OnFileRecieved(byte[] file, string from, string fileName)
         {
             var handler = FileRecieved;
-            if (handler != null) 
-                handler(this, new FileEventArgs(file, from, fileName,ParseFileExtension(fileName)));
+            handler?.Invoke(this, new FileEventArgs(file, @from, fileName,ParseFileExtension(fileName)));
         }
 
         #endregion

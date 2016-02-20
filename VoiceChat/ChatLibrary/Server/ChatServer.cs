@@ -162,9 +162,7 @@ namespace Backend.Server
             {
                 Command = Command.Broadcast,
                 To = userName,
-                Message = string.Format("{0}|{1}|{2}|{3}",
-                    string.Join(",", clients.Select(u => u.UserName).Where(name => name != userName)), changedUser, state,
-                    serverName)
+                Message = $"{string.Join(",", clients.Select(u => u.UserName).Where(name => name != userName))}|{changedUser}|{state}|{serverName}"
             };
             clientSocket.Send(data.ToByte());
         }
@@ -250,13 +248,13 @@ namespace Backend.Server
         protected virtual void OnClientConnected(Socket clientSocket, string name)
         {
             var handler = ClientConnected;
-            if (handler != null) handler(name, new CustomEventArgs(clientSocket));
+            handler?.Invoke(name, new CustomEventArgs(clientSocket));
         }
 
         protected virtual void OnClientDisconnected(Socket clientSocket, string name)
         {
             var handler = ClientDisconnected;
-            if (handler != null) handler(name, new CustomEventArgs(clientSocket));
+            handler?.Invoke(name, new CustomEventArgs(clientSocket));
         }
 
         #endregion
